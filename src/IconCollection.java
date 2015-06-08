@@ -22,6 +22,8 @@ public class IconCollection {
 	public final ImageIcon whiteIcon7 = new ImageIcon("pic/whiteIcon7.jpg");
 	public final ImageIcon whiteIcon8 = new ImageIcon("pic/whiteIcon8.jpg");
 	
+	public final ImageIcon flag = new ImageIcon("pic/flag.jpg");
+	
 	public final ImageIcon explode = new ImageIcon("pic/explode.gif");
     public final ImageIcon explodeSmall = new ImageIcon("pic/explodeSmall.gif");
     
@@ -32,4 +34,62 @@ public class IconCollection {
     public final ImageIcon dice4 = new ImageIcon("pic/dice4.gif");
     public final ImageIcon dice5 = new ImageIcon("pic/dice5.gif");
     public final ImageIcon dice6 = new ImageIcon("pic/dice6.gif");
+    
+    public final ImageIcon getWhiteIcon(int n){
+    	ImageIcon tmp = new ImageIcon();
+    	switch(n){
+    		case 0:
+    			tmp = whiteIcon;
+    			break;
+    		case 1:
+    			tmp = whiteIcon1;
+    			break;
+    		case 2:
+    			tmp = whiteIcon2;
+    			break;
+    		case 3:
+    			tmp = whiteIcon3;
+    			break;
+    		case 4:
+    			tmp = whiteIcon4;
+    			break;
+    		case 5:
+    			tmp = whiteIcon5;
+    			break;
+    		case 6:
+    			tmp = whiteIcon6;
+    			break;
+    		case 7:
+    			tmp = whiteIcon7;
+    			break;
+    		case 8:
+    			tmp = whiteIcon8;
+    			break;
+    	}
+    	return tmp;
+    }
+    public final ImageIcon getDice(int n){
+    	ImageIcon tmp = new ImageIcon();
+    	switch(n){
+    		case 1:
+    			tmp = dice1;
+    			break;
+    		case 2:
+    			tmp = dice2;
+    			break;
+    		case 3:
+    			tmp = dice3;
+    			break;
+    		case 4:
+    			tmp = dice4;
+    			break;
+    		case 5:
+    			tmp = dice5;
+    			break;
+    		case 6:
+    			tmp = dice6;
+    			break;
+    	}
+    	return tmp;
+    }
 }

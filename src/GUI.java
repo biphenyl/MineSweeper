@@ -57,20 +57,21 @@ public class GUI extends JFrame
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
 		
-		JLabel testLabel = new JLabel("HI");
-		testLabel.setBounds(14, 800, 60, 60);
-		testLabel.setIcon(icon.diceRolling);
-		testLabel.setVisible(false);
-		leftPanel.add(testLabel);
-		guiComponents_label.add(testLabel);
+		//JLabel testLabel = new JLabel("HI");
+		//testLabel.setBounds(14, 800, 60, 60);
+		//testLabel.setIcon(icon.diceRolling);
+		//testLabel.setVisible(false);
+		//leftPanel.add(testLabel);
+		//guiComponents_label.add(testLabel);
 		
-		diceButton = new JButton("Dice");
-		diceButton.setBounds(14, 888, 99, 27);
+		diceButton = new JButton(icon.dice4);
+		diceButton.setPressedIcon(icon.diceRolling);
+		diceButton.setBounds(20, 865, 50, 50);
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
-		JButton sweeper = new JButton("Sweeper");
-		sweeper.setBounds(123, 888, 99, 27);
+		JButton sweeper = new JButton(icon.flag);
+		sweeper.setBounds(123, 865, 50, 50);
 		leftPanel.add(sweeper);
 	
 		int[] yLabel = {33, 213, 393, 573};
@@ -214,40 +215,8 @@ public class GUI extends JFrame
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 
 					if(mineNumber[i][j]!=0){
-						switch(mineNumber[i][j]){
-							case 1:
-								mb.setIcon(icon.whiteIcon1);
-								mb.setPressedIcon(icon.whiteIcon1);
-								break;
-							case 2:
-								mb.setIcon(icon.whiteIcon2);
-								mb.setPressedIcon(icon.whiteIcon2);
-								break;
-							case 3:
-								mb.setIcon(icon.whiteIcon3);
-								mb.setPressedIcon(icon.whiteIcon3);
-								break;
-							case 4:
-								mb.setIcon(icon.whiteIcon4);
-								mb.setPressedIcon(icon.whiteIcon4);
-								break;
-							case 5:
-								mb.setIcon(icon.whiteIcon5);
-								mb.setPressedIcon(icon.whiteIcon5);
-								break;
-							case 6:
-								mb.setIcon(icon.whiteIcon6);
-								mb.setPressedIcon(icon.whiteIcon6);
-								break;
-							case 7:
-								mb.setIcon(icon.whiteIcon7);
-								mb.setPressedIcon(icon.whiteIcon7);
-								break;
-							case 8:
-								mb.setIcon(icon.whiteIcon8);
-								mb.setPressedIcon(icon.whiteIcon8);
-								break;
-						}
+						mb.setIcon(icon.getWhiteIcon(mineNumber[i][j]));
+						mb.setPressedIcon(icon.getWhiteIcon(mineNumber[i][j]));
 					}
 					else{ 
 						mb.setIcon(icon.whiteIcon);
@@ -358,7 +327,6 @@ public class GUI extends JFrame
 	
 	private void die(Player p)
 	{
-		// die animation?
 		
 		System.out.println("NOOOOOO!");
 		
@@ -430,9 +398,6 @@ public class GUI extends JFrame
         		if(mp <= 0 && state != 2)
         		{
         			nextTurn();
-        			JLabel lb = (JLabel)guiComponents_label.get(0);
-    				lb.setIcon(icon.diceRolling);
-    				lb.setVisible(false);
         			lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
         		}
             }
@@ -453,43 +418,17 @@ public class GUI extends JFrame
 			if(state!=2)
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else {
-				//change picture
-				JLabel lb = (JLabel)guiComponents_label.get(0);
-				lb.setVisible(true);
-				System.out.println(lb.getText());
 				
-				//give number
-				try {
-					TimeUnit.MILLISECONDS.sleep(400);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				//give number and change dice's picture
 				mp = dice.throwDice();
-				switch(mp){
-					case 1:
-						lb.setIcon(icon.dice1);
-						break;
-					case 2:
-						lb.setIcon(icon.dice2);
-						break;
-					case 3:
-						lb.setIcon(icon.dice3);
-						break;
-					case 4:
-						lb.setIcon(icon.dice4);
-						break;
-					case 5:
-						lb.setIcon(icon.dice5);
-						break;
-					case 6:
-						lb.setIcon(icon.dice6);
-						break;
-				}
+				JButton diceButton = (JButton) e.getSource();
+				diceButton.setIcon(icon.getDice(mp));
+				
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);
 				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
 				//change picture
+				
 			}
 			
 		}
