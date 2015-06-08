@@ -1,3 +1,5 @@
+import javax.swing.ImageIcon;
+
 public class Player {
 
 	private int x;
@@ -5,6 +7,7 @@ public class Player {
 	private int score;
 	private int sweeperNumber;
 	private int[] initPos = new int[2];
+	private ImageIcon icon;
 
 	public Player() {
 		x = 0;
@@ -29,6 +32,10 @@ public class Player {
 		return sweeperNumber;
 	}
 	
+	public ImageIcon getIcon(){
+		return icon;
+	}
+	
 	public void respawn(){
 		setXY(initPos[0], initPos[1]);
 	}
@@ -49,7 +56,11 @@ public class Player {
 		this.x = x;
 		this.y = y;
 	}
-		
+	
+	public void setIcon(String imgName){
+		icon = new ImageIcon(imgName);
+	}
+	
 	public void addScore(int s) {
 		score += s;
 		if (score < 0) score = 0;

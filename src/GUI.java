@@ -34,9 +34,9 @@ public class GUI extends JFrame
 	private int state=2, mp, nowPlayer, colored;	//state : 0=moving, 1=sweeping, 2=throwing dice
 	private ArrayList<JComponent> guiComponents_btn = new ArrayList<JComponent>(900);
 	private ArrayList<JComponent> guiComponents_label = new ArrayList<JComponent>(100);
-	private ArrayList<MineButton> coloredButtons = new ArrayList<MineButton>(9);
 	private Dice dice;
 	private Ground ground;
+	private JButton diceButton;
 	/**
 	 * Create the frame.
 	 */
@@ -56,10 +56,10 @@ public class GUI extends JFrame
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
 		
-		JButton diceButton = new JButton("Dice");
+		diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
 		diceButton.addActionListener(new DiceListener());
-		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
+		//diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 		leftPanel.add(diceButton);
 		
 		JButton sweeper = new JButton("Sweeper");
@@ -141,9 +141,13 @@ public class GUI extends JFrame
 			players.add(new Player());
 		
 		players.get(0).setInitPos(1, 1);
+		players.get(0).setIcon("pic/redIcon.jpg");
 		players.get(1).setInitPos(28, 1);
+		players.get(0).setIcon("pic/blueExIcon.jpg");
 		players.get(2).setInitPos(1, 28);
+		players.get(0).setIcon("pic/greenIcon.jpg");
 		players.get(3).setInitPos(28, 28);
+		players.get(0).setIcon("pic/yellowIcon.jpg");
 		
 		nowPlayer = 0;
 		
@@ -178,6 +182,8 @@ public class GUI extends JFrame
 		
 		int[][] map = ground.getMap();
 		int[][] mineNumber = ground.getMineNumber();
+		int x = players.get(nowPlayer).getX();
+		int y = players.get(nowPlayer).getY();
 		MineButton mb;
 		// test to show mines
 		for(int i=0; i<30; ++i){
@@ -185,39 +191,59 @@ public class GUI extends JFrame
 				if(map[i][j]==0){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
-					//mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
+					if(moveable(i, j)){
+						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
+					}
+					else {
+						mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					}
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
+					ImageIcon icon;
 					if(mineNumber[i][j]!=0)
-						mb.setIcon(new ImageIcon("pic/whiteIcon" + mineNumber[i][j] + ".jpg"));
+						icon = new ImageIcon("pic/whiteIcon" + mineNumber[i][j] + ".jpg");
 					else 
-						mb.setIcon(new ImageIcon("pic/whiteIcon.jpg"));
+						icon = new ImageIcon("pic/whiteIcon.jpg");
+					mb.setIcon(icon);
+					mb.setPressedIcon(icon);
 				}
 			}
 		}
 		
+		for(int i=0; i<4; ++i)
+		{
+			mb = (MineButton)guiComponents_btn.get(players.get(i).getX()*30+players.get(i).getY());
+			mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
+		}
 		
+		if(mp>0){
+			//hLMove(x, y);
+			
+		}
+		
+		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 	}
 	
 	private void hLMove(int x, int y)
 	{
 		MineButton mb;
-		coloredButtons.clear();
 		colored=0;
-		ImageIcon moveHL = new ImageIcon("pic/greenMoveIcon.jpg");
+		int mined = 0;
+		ImageIcon moveHL = new ImageIcon("pic/explodeSmall.gif");
 		if(x>0)
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y-30);
 			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			if(ground.getMapXY(x-1, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/redIcon.gif"));
+				mined++;
 			}
-			coloredButtons.add(mb);
 			colored++;
 			
 		}
@@ -226,10 +252,10 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y+30);
 			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			if(ground.getMapXY(x+1, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mined++;
 			}
-			coloredButtons.add(mb);
 			colored++;
 		}
 		
@@ -237,10 +263,10 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y-1);
 			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			if(ground.getMapXY(x, y-1)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mined++;
 			}
-			coloredButtons.add(mb);
 			colored++;
 		}
 		
@@ -248,16 +274,14 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y+1);
 			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			if(ground.getMapXY(x, y+1)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mined++;
 			}
-			coloredButtons.add(mb);
 			colored++;
 		}
-	}
-	
-	private void eraseColored(){
-		rePaint();
+		
+		System.out.println("mine:" + mined);
 	}
 	
 	private boolean moveable(int x, int y)
@@ -343,13 +367,12 @@ public class GUI extends JFrame
             			lbMovement.setText("剩餘步數: " + --mp);
             			for(int i=0; i< colored; i++)
             				coloredButtons.get(i).setIcon(new ImageIcon("pic/whiteIcon.jpg"));	//should write a erase method*/
-            			eraseColored();
+            			rePaint();
             			
             			if(mp>0){
-            				hLMove(x, y);
+            				//hLMove(x, y);
             				mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
-            			}
-            				
+            			}	
         			}
         			else {
         				JOptionPane.showMessageDialog(frame,"請選擇可移動的格子");
@@ -393,7 +416,7 @@ public class GUI extends JFrame
 				mp = dice.throwDice();
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);
-				hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
+				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
 				//change picture
 			}
 			
