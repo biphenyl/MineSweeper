@@ -56,10 +56,17 @@ public class GUI extends JFrame
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
 		
+		JLabel testLabel = new JLabel("HI");
+		testLabel.setBounds(14, 800, 60, 60);
+		testLabel.setIcon(new ImageIcon("pic/diceRolling.gif"));
+		testLabel.setVisible(false);
+		leftPanel.add(testLabel);
+		guiComponents_label.add(testLabel);
+		
 		diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
 		diceButton.addActionListener(new DiceListener());
-		//diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
+		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 		leftPanel.add(diceButton);
 		
 		JButton sweeper = new JButton("Sweeper");
@@ -411,6 +418,19 @@ public class GUI extends JFrame
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else {
 				//change picture
+				JLabel lb = (JLabel)guiComponents_label.get(0);
+				lb.setVisible(true);
+				System.out.println(lb.getText());
+				
+				/*try
+				{
+					Thread.sleep(1000);
+				} catch (Exception e2)
+				{
+					// TODO: handle exception
+				}*/
+
+				//lb.setVisible(false);
 				
 				//give number
 				mp = dice.throwDice();
