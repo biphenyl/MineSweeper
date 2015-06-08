@@ -67,7 +67,6 @@ public class GUI extends JFrame
 		diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
 		diceButton.addActionListener(new DiceListener());
-		diceButton.setPressedIcon(icon.diceRolling);
 		leftPanel.add(diceButton);
 		
 		JButton sweeper = new JButton("Sweeper");
@@ -269,7 +268,6 @@ public class GUI extends JFrame
 			
 		}
 		
-		diceButton.setPressedIcon(icon.diceRolling);
 	}
 	
 	private void hLMove(int x, int y)
@@ -432,6 +430,9 @@ public class GUI extends JFrame
         		if(mp <= 0 && state != 2)
         		{
         			nextTurn();
+        			JLabel lb = (JLabel)guiComponents_label.get(0);
+    				lb.setIcon(icon.diceRolling);
+    				lb.setVisible(false);
         			lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
         		}
             }
@@ -457,18 +458,34 @@ public class GUI extends JFrame
 				lb.setVisible(true);
 				System.out.println(lb.getText());
 				
-				/*try
-				{
-					Thread.sleep(1000);
-				} catch (Exception e2)
-				{
-					// TODO: handle exception
-				}*/
-
-				//lb.setVisible(false);
-				
 				//give number
+				try {
+					TimeUnit.MILLISECONDS.sleep(400);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				mp = dice.throwDice();
+				switch(mp){
+					case 1:
+						lb.setIcon(icon.dice1);
+						break;
+					case 2:
+						lb.setIcon(icon.dice2);
+						break;
+					case 3:
+						lb.setIcon(icon.dice3);
+						break;
+					case 4:
+						lb.setIcon(icon.dice4);
+						break;
+					case 5:
+						lb.setIcon(icon.dice5);
+						break;
+					case 6:
+						lb.setIcon(icon.dice6);
+						break;
+				}
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);
 				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
