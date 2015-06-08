@@ -58,6 +58,7 @@ public class GUI extends JFrame
 		JButton diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
 		diceButton.addActionListener(new DiceListener());
+		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 		leftPanel.add(diceButton);
 		
 		JButton sweeper = new JButton("Sweeper");
@@ -82,7 +83,7 @@ public class GUI extends JFrame
 		
 		JLabel lblx = new JLabel("5x");
 		lblx.setFont(new Font("新細明體", Font.PLAIN, 24));
-		lblx.setBounds(33, 336, 57, 19);
+		lblx.setBounds(33, 200, 57, 19);
 		leftPanel.add(lblx);
 		
 		lbMovement = new JLabel("1P 請擲骰子");
@@ -186,7 +187,7 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					mb.setIcon(new ImageIcon("pic/redIcon.jpg"));
+					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
@@ -211,6 +212,9 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y-30);
 			mb.setIcon(moveHL);
+			if(ground.getMapXY(x, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			}
 			coloredButtons.add(mb);
 			colored++;
 			
@@ -220,6 +224,9 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y+30);
 			mb.setIcon(moveHL);
+			if(ground.getMapXY(x, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			}
 			coloredButtons.add(mb);
 			colored++;
 		}
@@ -228,6 +235,9 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y-1);
 			mb.setIcon(moveHL);
+			if(ground.getMapXY(x, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			}
 			coloredButtons.add(mb);
 			colored++;
 		}
@@ -236,6 +246,9 @@ public class GUI extends JFrame
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y+1);
 			mb.setIcon(moveHL);
+			if(ground.getMapXY(x, y)==1){
+				mb.setPressedIcon(new ImageIcon("pic/explode.gif"));
+			}
 			coloredButtons.add(mb);
 			colored++;
 		}
@@ -282,6 +295,23 @@ public class GUI extends JFrame
 		// die animation?
 		System.out.println("NOOOOOO!");
 		
+		int x = p.getX();
+		int y = p.getY();
+		
+		MineButton mb = (MineButton)guiComponents_btn.get(x*30 + y);
+		mb.setIcon(new ImageIcon("pic/redIcon.jpg"));
+		
+		/*try
+		{
+			Thread.sleep(500);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		System.out.println(x + " LA " + y);
+		
 		mp=0;
 		
 		p.respawn();
@@ -311,10 +341,12 @@ public class GUI extends JFrame
             			for(int i=0; i< colored; i++)
             				coloredButtons.get(i).setIcon(new ImageIcon("pic/whiteIcon.jpg"));	//should write a erase method*/
             			eraseColored();
-            			mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
             			
-            			if(mp>0)
+            			if(mp>0){
             				hLMove(x, y);
+            				mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
+            			}
+            				
         			}
         			else {
         				JOptionPane.showMessageDialog(frame,"請選擇可移動的格子");
