@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.lang.Thread.State;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.IvParameterSpec;
 import javax.swing.ImageIcon;
@@ -188,6 +189,7 @@ public class GUI extends JFrame
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					//mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
@@ -293,6 +295,7 @@ public class GUI extends JFrame
 	private void die(Player p)
 	{
 		// die animation?
+		
 		System.out.println("NOOOOOO!");
 		
 		int x = p.getX();
@@ -313,7 +316,7 @@ public class GUI extends JFrame
 		System.out.println(x + " LA " + y);
 		
 		mp=0;
-		
+	
 		p.respawn();
 		p.addScore(-100);
 		
