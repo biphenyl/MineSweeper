@@ -37,6 +37,7 @@ public class GUI extends JFrame
 	private Dice dice;
 	private Ground ground;
 	private JButton diceButton;
+	private IconCollection icon = new IconCollection();
 	/**
 	 * Create the frame.
 	 */
@@ -58,7 +59,7 @@ public class GUI extends JFrame
 		
 		JLabel testLabel = new JLabel("HI");
 		testLabel.setBounds(14, 800, 60, 60);
-		testLabel.setIcon(new ImageIcon("pic/diceRolling.gif"));
+		testLabel.setIcon(icon.diceRolling);
 		testLabel.setVisible(true);
 		leftPanel.add(testLabel);
 		guiComponents_label.add(testLabel);
@@ -66,7 +67,6 @@ public class GUI extends JFrame
 		diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
 		diceButton.addActionListener(new DiceListener());
-		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 		leftPanel.add(diceButton);
 		
 		JButton sweeper = new JButton("Sweeper");
@@ -148,13 +148,13 @@ public class GUI extends JFrame
 			players.add(new Player());
 		
 		players.get(0).setInitPos(1, 1);
-		players.get(0).setIcon("pic/redIcon.jpg");
+		players.get(0).setIcon(icon.redIcon);
 		players.get(1).setInitPos(28, 1);
-		players.get(0).setIcon("pic/blueExIcon.jpg");
+		players.get(0).setIcon(icon.blueExIcon);
 		players.get(2).setInitPos(1, 28);
-		players.get(0).setIcon("pic/greenIcon.jpg");
+		players.get(0).setIcon(icon.greenIcon);
 		players.get(3).setInitPos(28, 28);
-		players.get(0).setIcon("pic/yellowIcon.jpg");
+		players.get(0).setIcon(icon.yellowIcon);
 		
 		nowPlayer = 0;
 		
@@ -172,7 +172,7 @@ public class GUI extends JFrame
 		System.out.println("醬汁");
 		
 		JLabel lb = (JLabel)guiComponents_label.get(0);
-		lb.setIcon(new ImageIcon("pic/diceRolling.gif"));
+		lb.setIcon(icon.diceRolling);
 	}
 	
 	private boolean victoryCheck()
@@ -200,8 +200,8 @@ public class GUI extends JFrame
 			for(int j=0; j<30; ++j){
 				if(map[i][j]==0){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
-					mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					mb.setIcon(icon.grayOldIcon);
+					mb.setPressedIcon(icon.grayOldIcon);
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
@@ -230,7 +230,7 @@ public class GUI extends JFrame
 		for(int i=0; i<4; ++i)
 		{
 			mb = (MineButton)guiComponents_btn.get(players.get(i).getX()*30+players.get(i).getY());
-			mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
+			mb.setIcon(icon.yellowIcon);
 		}
 		
 		if(mp>0){
@@ -238,7 +238,6 @@ public class GUI extends JFrame
 			
 		}
 		
-		diceButton.setPressedIcon(new ImageIcon("pic/diceRolling.gif"));
 	}
 	
 	private void hLMove(int x, int y)
@@ -246,13 +245,13 @@ public class GUI extends JFrame
 		MineButton mb;
 		colored=0;
 		int mined = 0;
-		ImageIcon moveHL = new ImageIcon("pic/explodeSmall.gif");
+		ImageIcon moveHL = icon.explodeSmall;
 		if(x>0)
 		{
 			mb = (MineButton)guiComponents_btn.get(x*30+y-30);
 			mb.setIcon(moveHL);
 			if(ground.getMapXY(x-1, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/redIcon.gif"));
+				mb.setPressedIcon(icon.redIcon);
 				mined++;
 			}
 			colored++;
@@ -264,7 +263,7 @@ public class GUI extends JFrame
 			mb = (MineButton)guiComponents_btn.get(x*30+y+30);
 			mb.setIcon(moveHL);
 			if(ground.getMapXY(x+1, y)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mb.setPressedIcon(icon.explodeSmall);
 				mined++;
 			}
 			colored++;
@@ -275,7 +274,7 @@ public class GUI extends JFrame
 			mb = (MineButton)guiComponents_btn.get(x*30+y-1);
 			mb.setIcon(moveHL);
 			if(ground.getMapXY(x, y-1)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mb.setPressedIcon(icon.explodeSmall);
 				mined++;
 			}
 			colored++;
@@ -286,7 +285,7 @@ public class GUI extends JFrame
 			mb = (MineButton)guiComponents_btn.get(x*30+y+1);
 			mb.setIcon(moveHL);
 			if(ground.getMapXY(x, y+1)==1){
-				mb.setPressedIcon(new ImageIcon("pic/explodeSamll.gif"));
+				mb.setPressedIcon(icon.explodeSmall);
 				mined++;
 			}
 			colored++;
@@ -337,7 +336,7 @@ public class GUI extends JFrame
 		int y = p.getY();
 		
 		MineButton mb = (MineButton)guiComponents_btn.get(x*30 + y);
-		mb.setIcon(new ImageIcon("pic/redIcon.jpg"));
+		mb.setIcon(icon.redIcon);
 		
 		/*try
 		{
@@ -377,12 +376,12 @@ public class GUI extends JFrame
             			System.out.println(x + " " + y + " " + mb.pos);
             			lbMovement.setText("剩餘步數: " + --mp);
             			for(int i=0; i< colored; i++)
-            				coloredButtons.get(i).setIcon(new ImageIcon("pic/whiteIcon.jpg"));	//should write a erase method*/
+            				coloredButtons.get(i).setIcon(icon.whiteIcon);	//should write a erase method*/
             			rePaint();
             			
             			if(mp>0){
             				//hLMove(x, y);
-            				mb.setIcon(new ImageIcon("pic/yellowIcon.jpg"));
+            				mb.setIcon(icon.yellowIcon);
             			}	
         			}
         			else {
@@ -391,7 +390,7 @@ public class GUI extends JFrame
                 }
             	else if(state == 1)
             	{
-            		mb.setIcon(new ImageIcon("pic/whiteIcon.jpg"));
+            		mb.setIcon(icon.whiteIcon);
             	}
             	else if(state == 2)
             	{
@@ -423,9 +422,8 @@ public class GUI extends JFrame
 			else {
 				//change picture
 				
-				
-
 				//give number
+				
 				mp = dice.throwDice();
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);

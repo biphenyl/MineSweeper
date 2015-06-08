@@ -57,8 +57,8 @@ public class Player {
 		this.y = y;
 	}
 	
-	public void setIcon(String imgName){
-		icon = new ImageIcon(imgName);
+	public void setIcon(ImageIcon imgName){
+		icon = imgName;
 	}
 	
 	public void addScore(int s) {
