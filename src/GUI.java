@@ -59,7 +59,7 @@ public class GUI extends JFrame
 		JLabel testLabel = new JLabel("HI");
 		testLabel.setBounds(14, 800, 60, 60);
 		testLabel.setIcon(new ImageIcon("pic/diceRolling.gif"));
-		testLabel.setVisible(false);
+		testLabel.setVisible(true);
 		leftPanel.add(testLabel);
 		guiComponents_label.add(testLabel);
 		
@@ -170,6 +170,9 @@ public class GUI extends JFrame
 		if(++nowPlayer >= 4)
 			nowPlayer = 0;
 		System.out.println("醬汁");
+		
+		JLabel lb = (JLabel)guiComponents_label.get(0);
+		lb.setIcon(new ImageIcon("pic/diceRolling.gif"));
 	}
 	
 	private boolean victoryCheck()
@@ -203,12 +206,12 @@ public class GUI extends JFrame
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
-					if(moveable(i, j)){
+					
+					if(moveable(i, j))
 						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
-					}
-					else {
+					else
 						mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));
-					}
+					
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
@@ -217,6 +220,7 @@ public class GUI extends JFrame
 						icon = new ImageIcon("pic/whiteIcon" + mineNumber[i][j] + ".jpg");
 					else 
 						icon = new ImageIcon("pic/whiteIcon.jpg");
+					
 					mb.setIcon(icon);
 					mb.setPressedIcon(icon);
 				}
@@ -418,25 +422,18 @@ public class GUI extends JFrame
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else {
 				//change picture
-				JLabel lb = (JLabel)guiComponents_label.get(0);
-				lb.setVisible(true);
-				System.out.println(lb.getText());
 				
-				/*try
-				{
-					Thread.sleep(1000);
-				} catch (Exception e2)
-				{
-					// TODO: handle exception
-				}*/
+				
 
-				//lb.setVisible(false);
-				
 				//give number
 				mp = dice.throwDice();
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);
 				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
+				
+				JLabel lb = (JLabel)guiComponents_label.get(0);
+				lb.setIcon(new ImageIcon("pic/dice/d000" + mp + ".gif"));
+				System.out.println(lb.getText());
 				//change picture
 			}
 			
