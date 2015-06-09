@@ -93,7 +93,8 @@ public class GUI extends JFrame
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
-		JButton sweeper = new JButton(icon.flag);
+		JButton sweeper = new JButton(icon.sweeper);
+		sweeper.setPressedIcon(icon.sweeperTrue);
 		sweeper.setBounds(123, 865, 50, 50);
 		leftPanel.add(sweeper);
 	
@@ -228,25 +229,12 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					
 					mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
 					mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
-/*=======
-
-					if(mineNumber[i][j]!=0){
-						mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
-						mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
-					}
-					else{ 
-						mb.setIcon(icon.whiteIcon[0]);
-						mb.setPressedIcon(icon.whiteIcon[0]);
-					}
->>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c*/
 				}
 				else if(map[i][j]==3){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					mb.setIcon(icon.flag);
-					mb.setIcon(icon.flag);
+					mb.setIcon(icon.grayOldIconWithFlag);			
 				}
 			}
 		}
@@ -273,7 +261,7 @@ public class GUI extends JFrame
 		if(x>0)
 		{
 			mbState = ground.getMapXY(x-1, y);
-			mb = (MineButton)guiComponents_btn.get(x*30+y-30);
+			mb = (MineButton)guiComponents_btn.get(x*width+y-width);
 			if(mbState==0){
 				mb.setIcon(moveHL);
 			}
@@ -283,13 +271,15 @@ public class GUI extends JFrame
 			else if(mbState==2){
 				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x-1, y)]);
 			}
-			
+			else if(mbState==3){
+				mb.setIcon(icon.hlGrayOldIconWithFlag);
+			}
 		}
 		
-		if(x<29)
+		if(x<height-1)
 		{
 			mbState = ground.getMapXY(x+1, y);
-			mb = (MineButton)guiComponents_btn.get(x*30+y+30);
+			mb = (MineButton)guiComponents_btn.get(x*width+y+width);
 			if(mbState==0){
 				mb.setIcon(moveHL);
 			}
@@ -299,12 +289,15 @@ public class GUI extends JFrame
 			else if(mbState==2){
 				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x+1, y)]);
 			}
+			else if(mbState==3){
+				mb.setIcon(icon.hlGrayOldIconWithFlag);
+			}
 		}
 		
 		if(y>0)
 		{
 			mbState = ground.getMapXY(x, y-1);
-			mb = (MineButton)guiComponents_btn.get(x*30+y-1);
+			mb = (MineButton)guiComponents_btn.get(x*width+y-1);
 			if(mbState==0){
 				mb.setIcon(moveHL);
 			}
@@ -314,12 +307,15 @@ public class GUI extends JFrame
 			else if(mbState==2){
 				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x, y-1)]);
 			}
+			else if(mbState==3){
+				mb.setIcon(icon.hlGrayOldIconWithFlag);
+			}
 		}
 		
-		if(y<29)
+		if(y<width-1)
 		{
 			mbState = ground.getMapXY(x, y+1);
-			mb = (MineButton)guiComponents_btn.get(x*30+y+1);
+			mb = (MineButton)guiComponents_btn.get(x*width+y+1);
 			if(mbState==0){
 				mb.setIcon(moveHL);
 			}
@@ -328,6 +324,9 @@ public class GUI extends JFrame
 			}
 			else if(mbState==2){
 				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x, y+1)]);
+			}
+			else if(mbState==3){
+				mb.setIcon(icon.hlGrayOldIconWithFlag);
 			}
 		}
 		
@@ -368,15 +367,16 @@ public class GUI extends JFrame
 		ground.expand(x, y);
 	}
 	
+	private void sweepable(int x,  int y){
+		
+	}
+	
 	private void sweep(){
 		
 	}
 
 	private void die(Player p)
 	{
-		
-		System.out.println("NOOOOOO!");
-		
 		int x = p.getX();
 		int y = p.getY();
 		
@@ -392,7 +392,6 @@ public class GUI extends JFrame
 			e.printStackTrace();
 		}
 		*/
-		System.out.println(x + " LA " + y);
 		
 		mp=0;
 	
@@ -433,14 +432,8 @@ public class GUI extends JFrame
             	
         		if(state == moving)
                 {
-        			if(moveable(x, y))
-        			{	
+        			if(moveable(x, y)){	
         				playerMove(x, y);
-        				/*players.get(nowPlayer).setXY(x, y);
-            			System.out.println(x + " " + y + " " + mb.pos);
-            			lbMovement.setText("剩餘步數: " + --mp);
-            			for(int i=0; i< colored; i++)
-            				coloredButtons.get(i).setIcon(icon.whiteIcon[0]);	//should write a erase method*/
             			rePaint();
             			
             			if(mp>0){
@@ -484,20 +477,16 @@ public class GUI extends JFrame
 			if(state != dicing)
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else {
-/*<<<<<<< HEAD
 				//change picture
 				
 				//give number
 				
-				mp = dice.throwDice();
-=======*/
 				
 				//give number and change dice's picture
 				mp = dice.throwDice();
 				JButton diceButton = (JButton) e.getSource();
 				diceButton.setIcon(icon.dice[mp]);
 				
-//>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
 				state = moving;
 				lbMovement.setText("剩餘步數: " + mp);
 				highLight(players.get(nowPlayer).getX(), players.get(nowPlayer).getY(), 1);

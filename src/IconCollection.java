@@ -3,6 +3,7 @@ import javax.swing.ImageIcon;
 public class IconCollection {
 	public final ImageIcon blueExIcon = new ImageIcon("pic/blueExIcon.jpg");
 	public final ImageIcon grayOldIcon = new ImageIcon("pic/grayOldIcon.jpg");
+	public final ImageIcon grayOldIconWithFlag = new ImageIcon("pic/grayOldIconWithFlag.jpg");
 	public final ImageIcon fullIcon = new ImageIcon("pic/fullIcon.JPG");
 	public final ImageIcon greenExIcon = new ImageIcon("pic/greenExIcon.jpg");
 	public final ImageIcon greenIcon = new ImageIcon("pic/greenIcon.jpg");
@@ -15,6 +16,8 @@ public class IconCollection {
 	public final ImageIcon[] whiteIcon = new ImageIcon[9];
 	
 	public final ImageIcon flag = new ImageIcon("pic/flag.jpg");
+	public final ImageIcon sweeper = new ImageIcon("pic/sweeper.jpg");
+	public final ImageIcon sweeperTrue = new ImageIcon("pic/sweeperTrue.jpg");
 	
 	public final ImageIcon explode = new ImageIcon("pic/explode.gif");
     public final ImageIcon explodeSmall = new ImageIcon("pic/explodeSmall.gif");
@@ -22,6 +25,7 @@ public class IconCollection {
     public final ImageIcon[] dice = new ImageIcon[7];
     
     public final ImageIcon[] hlGreenIcon = new ImageIcon[9];
+    public final ImageIcon hlGrayOldIconWithFlag = new ImageIcon("pic/hlGrayOldIconWithFlag.jpg");
     
     public IconCollection() {
     	whiteIcon[0] = new ImageIcon("pic/whiteIcon.JPG");
