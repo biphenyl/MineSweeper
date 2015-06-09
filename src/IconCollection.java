@@ -21,11 +21,16 @@ public class IconCollection {
     
     public final ImageIcon[] dice = new ImageIcon[7];
     
+    public final ImageIcon[] hlGreenIcon = new ImageIcon[9];
+    
     public IconCollection() {
     	whiteIcon[0] = new ImageIcon("pic/whiteIcon.JPG");
     	dice[0] = new ImageIcon("pic/diceRolling.gif");
+    	hlGreenIcon[0] = new ImageIcon("pic/hlGreenIcon.jpg");
+    	
     	for(int i = 1 ; i < whiteIcon.length ; i++) {
     		whiteIcon[i] = new ImageIcon("pic/whiteIcon" + i + ".jpg");
+    		hlGreenIcon[i] = new ImageIcon("pic/hlGreenIcon" + i + ".jpg");
     	}
     	for(int i = 1 ; i < dice.length ; i++) {
     		dice[i] = new ImageIcon("pic/dice" + i + ".gif");

@@ -118,6 +118,10 @@ public class Ground {
 	public int getMapXY(int x, int y){
 		return map[x][y];
 	}
+	
+	public int getMineNumXY(int x, int y){
+		return mineNumber[x][y];
+	}
 /*
 	public static void main(String[] args) {
 		Ground g = new Ground(30, 30, 100);

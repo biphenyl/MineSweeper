@@ -32,7 +32,8 @@ public class GUI extends JFrame
 	private JLabel lbMovement;
 	private ArrayList<Player> players = new ArrayList<Player>(4);
 	private GUI frame;
-	private int state=2, mp, nowPlayer, colored;	//state : 0=moving, 1=sweeping, 2=throwing dice
+	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
+	private int playerNum, width, height, totalMine;
 	private ArrayList<JComponent> guiComponents_btn = new ArrayList<JComponent>(900);
 	private ArrayList<JComponent> guiComponents_label = new ArrayList<JComponent>(100);
 	private Dice dice;
@@ -49,6 +50,11 @@ public class GUI extends JFrame
 	@SuppressWarnings("deprecation")
 	public GUI()
 	{
+		playerNum = 4;
+		width = 30;
+		height = 30;
+		totalMine = 300;
+		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
 		setBounds(100, 100, 1200, 1000);
@@ -137,7 +143,7 @@ public class GUI extends JFrame
 			}
 		}
 
-		ground = new Ground(30, 30, 300);	
+		ground = new Ground(width, height, totalMine);	
 		initPlayer();
 		
 		dice = new Dice();
@@ -152,6 +158,7 @@ public class GUI extends JFrame
 		try
 		{
 			frame = new GUI();
+			frame.setLocationRelativeTo(null);
 			frame.setVisible(true);
 		} catch (Exception e)
 		{
@@ -168,11 +175,11 @@ public class GUI extends JFrame
 		players.get(0).setInitPos(1, 1);
 		players.get(0).setIcon(icon.redIcon);
 		players.get(1).setInitPos(28, 1);
-		players.get(0).setIcon(icon.blueExIcon);
+		players.get(1).setIcon(icon.blueExIcon);
 		players.get(2).setInitPos(1, 28);
-		players.get(0).setIcon(icon.greenIcon);
+		players.get(2).setIcon(icon.greenIcon);
 		players.get(3).setInitPos(28, 28);
-		players.get(0).setIcon(icon.yellowIcon);
+		players.get(3).setIcon(icon.yellowIcon);
 		
 		nowPlayer = 0;
 		
@@ -185,25 +192,13 @@ public class GUI extends JFrame
 	private void nextTurn()
 	{
 		state = dicing;
-		if(++nowPlayer >= 4)
+		
+		if(++nowPlayer >= playerNum)
 			nowPlayer = 0;
 		System.out.println("醬汁");
 		
 		JLabel lb = (JLabel)guiComponents_label.get(0);
 		lb.setIcon(icon.dice[0]);
-	}
-	
-	private boolean victoryCheck()
-	{
-		if(players.get(nowPlayer).getScore()>=1000)
-			return true;
-		else 
-			return false;
-	}
-	
-	private void victory()
-	{
-		
 	}
 	
 	private void rePaint(){
@@ -269,58 +264,73 @@ public class GUI extends JFrame
 		
 	}
 	
-	private void hLMove(int x, int y)
+	private void highLight(int x, int y, int color)
 	{
 		MineButton mb;
-		colored=0;
-		int mined = 0;
-		ImageIcon moveHL = icon.explodeSmall;
+		ImageIcon moveHL = icon.greenMoveExIcon;
+		int mbState;
+		
 		if(x>0)
 		{
+			mbState = ground.getMapXY(x-1, y);
 			mb = (MineButton)guiComponents_btn.get(x*30+y-30);
-			mb.setIcon(moveHL);
-			if(ground.getMapXY(x-1, y)==1){
-				mb.setPressedIcon(icon.redIcon);
-				mined++;
+			if(mbState==0){
+				mb.setIcon(moveHL);
 			}
-			colored++;
+			else if(mbState==1){
+				mb.setIcon(moveHL);
+			}
+			else if(mbState==2){
+				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x-1, y)]);
+			}
 			
 		}
 		
 		if(x<29)
 		{
+			mbState = ground.getMapXY(x+1, y);
 			mb = (MineButton)guiComponents_btn.get(x*30+y+30);
-			mb.setIcon(moveHL);
-			if(ground.getMapXY(x+1, y)==1){
-				mb.setPressedIcon(icon.explodeSmall);
-				mined++;
+			if(mbState==0){
+				mb.setIcon(moveHL);
 			}
-			colored++;
+			else if(mbState==1){
+				mb.setIcon(moveHL);
+			}
+			else if(mbState==2){
+				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x+1, y)]);
+			}
 		}
 		
 		if(y>0)
 		{
+			mbState = ground.getMapXY(x, y-1);
 			mb = (MineButton)guiComponents_btn.get(x*30+y-1);
-			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y-1)==1){
-				mb.setPressedIcon(icon.explodeSmall);
-				mined++;
+			if(mbState==0){
+				mb.setIcon(moveHL);
 			}
-			colored++;
+			else if(mbState==1){
+				mb.setIcon(moveHL);
+			}
+			else if(mbState==2){
+				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x, y-1)]);
+			}
 		}
 		
 		if(y<29)
 		{
+			mbState = ground.getMapXY(x, y+1);
 			mb = (MineButton)guiComponents_btn.get(x*30+y+1);
-			mb.setIcon(moveHL);
-			if(ground.getMapXY(x, y+1)==1){
-				mb.setPressedIcon(icon.explodeSmall);
-				mined++;
+			if(mbState==0){
+				mb.setIcon(moveHL);
 			}
-			colored++;
+			else if(mbState==1){
+				mb.setIcon(moveHL);
+			}
+			else if(mbState==2){
+				mb.setIcon(icon.hlGreenIcon[ground.getMineNumXY(x, y+1)]);
+			}
 		}
 		
-		System.out.println("mine:" + mined);
 	}
 	
 	private boolean moveable(int x, int y)
@@ -358,6 +368,10 @@ public class GUI extends JFrame
 		ground.expand(x, y);
 	}
 	
+	private void sweep(){
+		
+	}
+
 	private void die(Player p)
 	{
 		
@@ -385,12 +399,27 @@ public class GUI extends JFrame
 		p.respawn();
 		p.addScore(-100);
 		
+		rePaint();
 	}
 	
 	private void getFlag(){
-		
+		players.get(nowPlayer).addScore(200);
+		ground.generateflag();
 	}
 	
+	private boolean victoryCheck()
+	{
+		if(players.get(nowPlayer).getScore()>=1000)
+			return true;
+		else 
+			return false;
+	}
+
+	private void victory()
+	{
+		
+	}
+
 	class ButtonListener implements ActionListener
 	{
 		@Override
@@ -415,7 +444,7 @@ public class GUI extends JFrame
             			rePaint();
             			
             			if(mp>0){
-            				//hLMove(x, y);
+            				highLight(x, y, 1);
             				mb.setIcon(players.get(nowPlayer).getIcon());
             			}	
         			}
@@ -471,7 +500,7 @@ public class GUI extends JFrame
 //>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
 				state = moving;
 				lbMovement.setText("剩餘步數: " + mp);
-				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
+				highLight(players.get(nowPlayer).getX(), players.get(nowPlayer).getY(), 1);
 				
 				JLabel lb = (JLabel)guiComponents_label.get(0);
 				lb.setIcon(new ImageIcon("pic/dice/d000" + mp + ".gif"));
@@ -490,7 +519,15 @@ public class GUI extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			// TODO Auto-generated method stub
-			
+			if(state == dicing){
+				JOptionPane.showMessageDialog(frame,"你必須先骰骰子");
+			}
+			else if(state == sweeping){
+				state = moving;
+			}
+			else if(state == moving){
+				state = sweeping;
+			}
 			// sweeper-1
 			// highlight sweep-able button
 			// sweep
