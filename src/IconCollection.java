@@ -13,14 +13,15 @@ public class IconCollection {
 	public final ImageIcon yellowIcon2 = new ImageIcon("pic/yellowIcon2.jpg");
 	
 	public final ImageIcon whiteIcon = new ImageIcon("pic/whiteIcon.JPG");
-	public final ImageIcon whiteIcon1 = new ImageIcon("pic/whiteIcon1.jpg");
-	public final ImageIcon whiteIcon2 = new ImageIcon("pic/whiteIcon2.jpg");
-	public final ImageIcon whiteIcon3 = new ImageIcon("pic/whiteIcon3.jpg");
-	public final ImageIcon whiteIcon4 = new ImageIcon("pic/whiteIcon4.jpg");
-	public final ImageIcon whiteIcon5 = new ImageIcon("pic/whiteIcon5.jpg");
-	public final ImageIcon whiteIcon6 = new ImageIcon("pic/whiteIcon6.jpg");
-	public final ImageIcon whiteIcon7 = new ImageIcon("pic/whiteIcon7.jpg");
-	public final ImageIcon whiteIcon8 = new ImageIcon("pic/whiteIcon8.jpg");
+	private final ImageIcon whiteIcon1 = new ImageIcon("pic/whiteIcon1.jpg");
+	private final ImageIcon whiteIcon2 = new ImageIcon("pic/whiteIcon2.jpg");
+	private final ImageIcon whiteIcon3 = new ImageIcon("pic/whiteIcon3.jpg");
+	private final ImageIcon whiteIcon4 = new ImageIcon("pic/whiteIcon4.jpg");
+	private final ImageIcon whiteIcon5 = new ImageIcon("pic/whiteIcon5.jpg");
+	private final ImageIcon whiteIcon6 = new ImageIcon("pic/whiteIcon6.jpg");
+	private final ImageIcon whiteIcon7 = new ImageIcon("pic/whiteIcon7.jpg");
+	private final ImageIcon whiteIcon8 = new ImageIcon("pic/whiteIcon8.jpg");
+	public final ImageIcon whiteIcons[] = {whiteIcon1, whiteIcon2, whiteIcon1, whiteIcon3, whiteIcon4, whiteIcon5, whiteIcon6, whiteIcon7, whiteIcon8, };
 	
 	public final ImageIcon explode = new ImageIcon("pic/explode.gif");
     public final ImageIcon explodeSmall = new ImageIcon("pic/explodeSmall.gif");

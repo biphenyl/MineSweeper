@@ -215,14 +215,14 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					ImageIcon icon;
+					ImageIcon img;
 					if(mineNumber[i][j]!=0)
-						icon = new ImageIcon("pic/whiteIcon" + mineNumber[i][j] + ".jpg");
+						img = icon.whiteIcons[mineNumber[i][j]];
 					else 
-						icon = new ImageIcon("pic/whiteIcon.jpg");
+						img = new ImageIcon("pic/whiteIcon.jpg");
 					
-					mb.setIcon(icon);
-					mb.setPressedIcon(icon);
+					mb.setIcon(img);
+					mb.setPressedIcon(img);
 				}
 			}
 		}
