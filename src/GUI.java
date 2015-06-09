@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.IvParameterSpec;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -38,6 +39,10 @@ public class GUI extends JFrame
 	private Ground ground;
 	private JButton diceButton;
 	private IconCollection icon = new IconCollection();
+	
+	private final int moving = 0;
+	private final int sweeping = 1;
+	private final int dicing = 2;
 	/**
 	 * Create the frame.
 	 */
@@ -57,6 +62,7 @@ public class GUI extends JFrame
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
 		
+/*<<<<<<< HEAD
 		JLabel testLabel = new JLabel("HI");
 		testLabel.setBounds(14, 800, 60, 60);
 		testLabel.setIcon(icon.diceRolling);
@@ -66,11 +72,23 @@ public class GUI extends JFrame
 		
 		diceButton = new JButton("Dice");
 		diceButton.setBounds(14, 888, 99, 27);
+=======
+		//JLabel testLabel = new JLabel("HI");
+		//testLabel.setBounds(14, 800, 60, 60);
+		//testLabel.setIcon(icon.diceRolling);
+		//testLabel.setVisible(false);
+		//leftPanel.add(testLabel);
+		//guiComponents_label.add(testLabel);*/
+		
+		diceButton = new JButton(icon.dice[4]);
+		diceButton.setPressedIcon(icon.dice[0]);
+		diceButton.setBounds(20, 865, 50, 50);
+//>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
-		JButton sweeper = new JButton("Sweeper");
-		sweeper.setBounds(123, 888, 99, 27);
+		JButton sweeper = new JButton(icon.flag);
+		sweeper.setBounds(123, 865, 50, 50);
 		leftPanel.add(sweeper);
 	
 		int[] yLabel = {33, 213, 393, 573};
@@ -96,7 +114,7 @@ public class GUI extends JFrame
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbMovement.setBounds(14, 830, 208, 27);
+		lbMovement.setBounds(17, 825, 208, 27);
 		leftPanel.add(lbMovement);
 		
 		rightPanel = new JPanel();
@@ -166,13 +184,13 @@ public class GUI extends JFrame
 	
 	private void nextTurn()
 	{
-		state = 2;
+		state = dicing;
 		if(++nowPlayer >= 4)
 			nowPlayer = 0;
 		System.out.println("醬汁");
 		
 		JLabel lb = (JLabel)guiComponents_label.get(0);
-		lb.setIcon(icon.diceRolling);
+		lb.setIcon(icon.dice[0]);
 	}
 	
 	private boolean victoryCheck()
@@ -215,14 +233,25 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
-					ImageIcon img;
-					if(mineNumber[i][j]!=0)
-						img = icon.whiteIcons[mineNumber[i][j]];
-					else 
-						img = new ImageIcon("pic/whiteIcon.jpg");
 					
-					mb.setIcon(img);
-					mb.setPressedIcon(img);
+					mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
+					mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
+/*=======
+
+					if(mineNumber[i][j]!=0){
+						mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
+						mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
+					}
+					else{ 
+						mb.setIcon(icon.whiteIcon[0]);
+						mb.setPressedIcon(icon.whiteIcon[0]);
+					}
+>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c*/
+				}
+				else if(map[i][j]==3){
+					mb = (MineButton)guiComponents_btn.get(i*30+j);
+					mb.setIcon(icon.flag);
+					mb.setIcon(icon.flag);
 				}
 			}
 		}
@@ -318,6 +347,9 @@ public class GUI extends JFrame
 			ground.sweep(x, y);
 			return;
 		}
+		else if(ground.getMapXY(x, y)==3){
+			getFlag();
+		}
 		
 		p.setXY(x, y);
 		System.out.println(x + " " + y);
@@ -328,7 +360,6 @@ public class GUI extends JFrame
 	
 	private void die(Player p)
 	{
-		// die animation?
 		
 		System.out.println("NOOOOOO!");
 		
@@ -356,6 +387,10 @@ public class GUI extends JFrame
 		
 	}
 	
+	private void getFlag(){
+		
+	}
+	
 	class ButtonListener implements ActionListener
 	{
 		@Override
@@ -367,7 +402,7 @@ public class GUI extends JFrame
             	int x = mb.x;
         		int y = mb.y;
             	
-        		if(state == 0)
+        		if(state == moving)
                 {
         			if(moveable(x, y))
         			{	
@@ -376,28 +411,28 @@ public class GUI extends JFrame
             			System.out.println(x + " " + y + " " + mb.pos);
             			lbMovement.setText("剩餘步數: " + --mp);
             			for(int i=0; i< colored; i++)
-            				coloredButtons.get(i).setIcon(icon.whiteIcon);	//should write a erase method*/
+            				coloredButtons.get(i).setIcon(icon.whiteIcon[0]);	//should write a erase method*/
             			rePaint();
             			
             			if(mp>0){
             				//hLMove(x, y);
-            				mb.setIcon(icon.yellowIcon);
+            				mb.setIcon(players.get(nowPlayer).getIcon());
             			}	
         			}
         			else {
         				JOptionPane.showMessageDialog(frame,"請選擇可移動的格子");
 					}
                 }
-            	else if(state == 1)
+            	else if(state == sweeping)
             	{
-            		mb.setIcon(icon.whiteIcon);
+            		mb.setIcon(icon.whiteIcon[0]);
             	}
-            	else if(state == 2)
+            	else if(state == dicing)
             	{
             		JOptionPane.showMessageDialog(frame,"你必須先骰骰子");
             	}
         		
-        		if(mp <= 0 && state != 2)
+        		if(mp <= 0 && state != dicing)
         		{
         			nextTurn();
         			lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
@@ -417,15 +452,24 @@ public class GUI extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			// TODO Auto-generated method stub
-			if(state!=2)
+			if(state != dicing)
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else {
+/*<<<<<<< HEAD
 				//change picture
 				
 				//give number
 				
 				mp = dice.throwDice();
-				state = 0;
+=======*/
+				
+				//give number and change dice's picture
+				mp = dice.throwDice();
+				JButton diceButton = (JButton) e.getSource();
+				diceButton.setIcon(icon.dice[mp]);
+				
+//>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
+				state = moving;
 				lbMovement.setText("剩餘步數: " + mp);
 				//hLMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
 				
@@ -433,6 +477,7 @@ public class GUI extends JFrame
 				lb.setIcon(new ImageIcon("pic/dice/d000" + mp + ".gif"));
 				System.out.println(lb.getText());
 				//change picture
+				
 			}
 			
 		}

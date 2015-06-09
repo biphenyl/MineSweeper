@@ -14,6 +14,9 @@ public class Ground {
 		expanded = new boolean[width][height];
 		
 		generateMap(num);
+		
+		map[width/2][height/2] = 3;
+		
 		countMine();
 	}
 
@@ -45,6 +48,22 @@ public class Ground {
 				map[width-1-i][height-j-1] = 0;
 			}
 		}
+	}
+	
+	public void generateflag() {
+		boolean succeed=false;
+		Random rand = new Random();
+		int x, y;
+		
+		while (!succeed) {
+			x = rand.nextInt(width);
+			y = rand.nextInt(height);
+			
+			if (map[x][y] != 1) {//not pn mine
+				map[x][y] = 3;//flag
+				succeed = true;
+			}	
+		}	
 	}
 
 	private void countMine() {
