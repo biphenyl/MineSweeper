@@ -70,7 +70,8 @@ public class GUI extends JFrame
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
-		JButton sweeper = new JButton(icon.flag);
+		JButton sweeper = new JButton(icon.sweeper);
+		sweeper.setPressedIcon(icon.sweeperTrue);
 		sweeper.setBounds(123, 865, 50, 50);
 		leftPanel.add(sweeper);
 	
@@ -213,6 +214,7 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
+<<<<<<< HEAD
 
 					if(mineNumber[i][j]!=0){
 						mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
@@ -222,6 +224,14 @@ public class GUI extends JFrame
 						mb.setIcon(icon.whiteIcon[0]);
 						mb.setPressedIcon(icon.whiteIcon[0]);
 					}
+=======
+					mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
+					mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
+				}
+				else if(map[i][j]==3){
+					mb = (MineButton)guiComponents_btn.get(i*30+j);
+					mb.setIcon(icon.grayOldIconWithFlag);			
+>>>>>>> benwu95
 				}
 			}
 		}
