@@ -64,8 +64,8 @@ public class GUI extends JFrame
 		//leftPanel.add(testLabel);
 		//guiComponents_label.add(testLabel);
 		
-		diceButton = new JButton(icon.dice4);
-		diceButton.setPressedIcon(icon.diceRolling);
+		diceButton = new JButton(icon.dice[4]);
+		diceButton.setPressedIcon(icon.dice[0]);
 		diceButton.setBounds(20, 865, 50, 50);
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
@@ -97,7 +97,7 @@ public class GUI extends JFrame
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbMovement.setBounds(14, 830, 208, 27);
+		lbMovement.setBounds(17, 825, 208, 27);
 		leftPanel.add(lbMovement);
 		
 		rightPanel = new JPanel();
@@ -215,12 +215,12 @@ public class GUI extends JFrame
 					mb = (MineButton)guiComponents_btn.get(i*30+j);
 
 					if(mineNumber[i][j]!=0){
-						mb.setIcon(icon.getWhiteIcon(mineNumber[i][j]));
-						mb.setPressedIcon(icon.getWhiteIcon(mineNumber[i][j]));
+						mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
+						mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
 					}
 					else{ 
-						mb.setIcon(icon.whiteIcon);
-						mb.setPressedIcon(icon.whiteIcon);
+						mb.setIcon(icon.whiteIcon[0]);
+						mb.setPressedIcon(icon.whiteIcon[0]);
 					}
 				}
 			}
@@ -374,7 +374,7 @@ public class GUI extends JFrame
             			System.out.println(x + " " + y + " " + mb.pos);
             			lbMovement.setText("剩餘步數: " + --mp);
             			for(int i=0; i< colored; i++)
-            				coloredButtons.get(i).setIcon(icon.whiteIcon);	//should write a erase method*/
+            				coloredButtons.get(i).setIcon(icon.whiteIcon[0]);	//should write a erase method*/
             			rePaint();
             			
             			if(mp>0){
@@ -388,7 +388,7 @@ public class GUI extends JFrame
                 }
             	else if(state == 1)
             	{
-            		mb.setIcon(icon.whiteIcon);
+            		mb.setIcon(icon.whiteIcon[0]);
             	}
             	else if(state == 2)
             	{
@@ -422,7 +422,7 @@ public class GUI extends JFrame
 				//give number and change dice's picture
 				mp = dice.throwDice();
 				JButton diceButton = (JButton) e.getSource();
-				diceButton.setIcon(icon.getDice(mp));
+				diceButton.setIcon(icon.dice[mp]);
 				
 				state = 0;
 				lbMovement.setText("剩餘步數: " + mp);
