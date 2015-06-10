@@ -31,7 +31,7 @@ public class GUI extends JFrame
 {
 
 	private JPanel contentPane, leftPanel, rightPanel;
-	private JLabel lbMovement;
+	private JLabel lbMovement, lbNowplayer;
 	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
@@ -95,7 +95,7 @@ public class GUI extends JFrame
 		
 		diceButton = new JButton(icon.dice[4]);
 		diceButton.setPressedIcon(icon.dice[0]);
-		diceButton.setBounds(20, 865, 50, 50);
+		diceButton.setBounds(20, 811, 96, 96);
 //>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
@@ -131,18 +131,25 @@ public class GUI extends JFrame
 		lbMovement.setBounds(14, 722, 208, 27);
 		leftPanel.add(lbMovement);
 		
+		lbNowplayer = new JLabel("現在玩家是: 1P");
+		lbNowplayer.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
+		lbNowplayer.setBounds(20, 664, 202, 45);
+		leftPanel.add(lbNowplayer);
+		
 		rightPanel = new JPanel();
 		rightPanel.setBounds(0, 33, 934, 920);
 		contentPane.add(rightPanel);
 		rightPanel.setLayout(null);
 		
+		int startX = (920-30*height)/2;
+		int startY = (934-30*width)/2;
 		for(int i=0; i<height; ++i)
 		{
 			for(int j=0; j<width; ++j)
 			{
 				MineButton btn = new MineButton(i, j);
 				btn.setSize(30, 30);
-				btn.setLocation(j*30, i*30);
+				btn.setLocation(startY+j*30, startX+i*30);
 				//btn.setEnabled(false);
 				btn.addActionListener(new ButtonListener());
 				btn.pos = i*width+j;
@@ -212,6 +219,8 @@ public class GUI extends JFrame
 		sweeperButton.setIcon(icon.sweeper);
 		if(++nowPlayer >= playerNum)
 			nowPlayer = 0;
+		
+		lbNowplayer.setText("現在玩家是: " + (nowPlayer+1) + "P");
 		System.out.println("醬汁");
 		
 	}
@@ -543,7 +552,7 @@ public class GUI extends JFrame
 				lbMovement.setText((fighter1.getOrder()+1) + "P獲勝！");
 				
 				state = moving;
-				updateMP(mp);
+				mp = 0;
 			}
 			else{
 				lbMovement.setText("平手！");
@@ -556,7 +565,14 @@ public class GUI extends JFrame
 	{
 		MineButton mb = (MineButton)guiComponents_btn.get(x*width+y);
 		mb.setIcon(icon.explodeSmall);
-		mp = 0;
+		if(state==moving)
+		{
+			mp = 0;
+			System.out.println((p.getOrder()+1) + "P killed by mine");
+		}
+		else {
+			System.out.println((p.getOrder()+1) + "P killed by player");
+		}
 		updateScore(p, -100);
 		final int x1 = x, y1 = y;
 		/*try
@@ -574,7 +590,6 @@ public class GUI extends JFrame
 				MineButton mb = (MineButton)guiComponents_btn.get(x1*width+y1);
 				mb.setIcon(icon.whiteIcon[ground.getMapXY(x1, y1)]);
 				
-				rePaint();
 			}
 		};
 		Timer timer = new Timer(delay, exploder);
@@ -582,6 +597,8 @@ public class GUI extends JFrame
 		timer.start();
 		
 		p.respawn();
+		mb = (MineButton)guiComponents_btn.get(p.getX()*width+p.getY());
+		mb.setIcon(p.getIcon());
 	}
 	
 	private void getFlag(){
@@ -618,6 +635,7 @@ public class GUI extends JFrame
         				playerMove(x, y);
             			rePaint();
             			
+            			System.out.println("mp: "+ mp + " state: " + state);
             			if(mp>0 && state==moving){
             				highLightMove(x, y);
             				mb.setIcon(players.get(nowPlayer).getIcon());
@@ -630,7 +648,7 @@ public class GUI extends JFrame
             	case sweeping:
             		if(sweepable(x, y)){
             			sweep(x, y);
-            			repaint();
+            			rePaint();
             			
             			if(mp>0){
             				Player p = players.get(nowPlayer);
@@ -681,13 +699,14 @@ public class GUI extends JFrame
 				//give number and change dice's picture
 				
 				diceButton.setIcon(icon.dice[0]);
-				mp = dice.throwDice();
-				final int temp2 = mp;
+				temp = dice.throwDice();
+				final int temp2 = temp;
 				//change picture
-				int delay = 500; 
+				int delay = 300; 
 				ActionListener diceRoller = new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						diceButton.setIcon(icon.dice[temp2]);
+						System.out.println("inner MP: " + mp);
 					}
 				};
 				Timer timer = new Timer(delay, diceRoller);
@@ -695,20 +714,20 @@ public class GUI extends JFrame
 				timer.start();
 				
 			}
-			
+			System.out.println("outer MP: " + temp);
 			if(state==dicing){
+				mp = temp;
 				state = moving;
 				updateMP(mp);
+				System.out.println("now player is " + (players.get(nowPlayer).getOrder()+1) + "P");
 				highLightMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
 			}
 			else if(state==fightingPart1){
-				strenth1 = mp;
-				mp = temp;
+				strenth1 = temp;
 				fight(fighter1, fighter2);
 			}
 			else if(state==fightingPart2){
-				strenth2 = mp;
-				mp = temp;
+				strenth2 = temp;
 				fight(fighter1, fighter2);
 			}
 		}
@@ -755,8 +774,8 @@ public class GUI extends JFrame
 					|| opened[x][y+1]==0 || opened[x+1][y-1]==0 || opened[x+1][y]==0 || opened[x+1][y+1]==0){
 				return true;
 			}
-			else if(opened[x-1][y-1]==2 || opened[x-1][y]==2 || opened[x-1][y+1]==2 || opened[x][y-1]==2 
-					|| opened[x][y+1]==2 || opened[x+1][y-1]==2 || opened[x+1][y]==2 || opened[x+1][y+1]==2){
+			else if(opened[x-1][y-1]==1 || opened[x-1][y]==1 || opened[x-1][y+1]==1 || opened[x][y-1]==1 
+					|| opened[x][y+1]==1 || opened[x+1][y-1]==1 || opened[x+1][y]==1 || opened[x+1][y+1]==1){
 				return true;
 			}
 			else 

@@ -108,8 +108,10 @@ public class Ground {
 				expand(x + 1, y - 1);
 				expand(x - 1, y + 1);
 				expand(x - 1, y - 1);
-			} else
-				map[x][y] = 2;
+			} else{
+				if(map[x][y]!=3)
+					map[x][y] = 2;
+			}
 		}
 	}
 
