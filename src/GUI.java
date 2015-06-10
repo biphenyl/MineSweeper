@@ -543,10 +543,11 @@ public class GUI extends JFrame
 				lbMovement.setText((fighter1.getOrder()+1) + "P獲勝！");
 				
 				state = moving;
-				updateMP(--mp);
+				updateMP(mp);
 			}
 			else{
 				lbMovement.setText("平手！");
+				nextTurn();
 			}
 		}
 	}
@@ -567,7 +568,7 @@ public class GUI extends JFrame
 			e.printStackTrace();
 		}
 		*/
-		int delay = 1500; 
+		int delay = 1000; 
 		ActionListener exploder = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				MineButton mb = (MineButton)guiComponents_btn.get(x1*width+y1);
@@ -617,7 +618,7 @@ public class GUI extends JFrame
         				playerMove(x, y);
             			rePaint();
             			
-            			if(mp>0){
+            			if(mp>0 && state==moving){
             				highLightMove(x, y);
             				mb.setIcon(players.get(nowPlayer).getIcon());
             			}	
@@ -788,6 +789,5 @@ public class GUI extends JFrame
 		public void windowOpened(WindowEvent e) {}
 		public void windowActivated(WindowEvent e) {}
 		
-	}
-	
+	}	
 }
