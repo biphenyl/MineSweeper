@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+/bin
+=======
 # Created by https://www.gitignore.io
 
 ### Java ###
@@ -19,3 +22,4 @@ hs_err_pid*
 bin/
 *.swp
 
+>>>>>>> b8179c4007908f867f3aaf458947969d2eabe3ad
