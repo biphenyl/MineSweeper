@@ -6,12 +6,14 @@ public class Player {
 	private int y;
 	private int score;
 	private int sweeperNumber;
+	private int order;
 	private int[] initPos = new int[2];
 	private ImageIcon icon;
 
-	public Player() {
+	public Player(int order) {
 		x = 0;
 		y = 0;
+		this.order = order;
 		score = 0;
 		sweeperNumber = 10;
 	}
@@ -34,6 +36,10 @@ public class Player {
 	
 	public ImageIcon getIcon(){
 		return icon;
+	}
+	
+	public int getOrder(){
+		return order;
 	}
 	
 	public void respawn(){

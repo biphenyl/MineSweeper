@@ -8,13 +8,13 @@ public class Ground {
 	private int[][] mineNumber;
 	private boolean[][] expanded;
 
-	public Ground(int width, int height, int num) {
+	public Ground(int height, int width, int num) {
 		this.width = width;
 		this.height = height;
-		expanded = new boolean[width][height];
+		expanded = new boolean[height][width];
 		
 		generateMap(num);
-		map[width/2][height/2] = 3;
+		map[height/2][width/2] = 3;
 		
 		countMine();
 	}
@@ -22,8 +22,8 @@ public class Ground {
 		boolean succeed = false;
 		Random rand = new Random();
 		while (!succeed) {
-			int x = rand.nextInt(width);
-			int y = rand.nextInt(height);
+			int x = rand.nextInt(height);
+			int y = rand.nextInt(width);
 			if (map[x][y] != 1) {//not pn mine
 				map[x][y] = 3;//flag
 				succeed = true;
@@ -34,15 +34,15 @@ public class Ground {
 	private void generateMap(int num) {
 		Random rand = new Random();
 		
-		map = new int[width][height];
+		map = new int[height][width];
 
 		while (num > 0) {
 			int x, y;
 			boolean succeed = false;
 
 			while (!succeed) {
-				x = rand.nextInt(width);
-				y = rand.nextInt(height);
+				x = rand.nextInt(height);
+				y = rand.nextInt(width);
 				if (map[x][y] == 0) {
 					map[x][y] = 1;
 					succeed = true;
@@ -54,9 +54,9 @@ public class Ground {
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				map[i][j] = 0;
-				map[i][height-1-j] = 0;
-				map[width-1-i][j] = 0;
-				map[width-1-i][height-j-1] = 0;
+				map[i][width-1-j] = 0;
+				map[height-1-i][j] = 0;
+				map[height-1-i][width-j-1] = 0;
 			}
 		}
 	}
@@ -67,8 +67,8 @@ public class Ground {
 		int x, y;
 		
 		while (!succeed) {
-			x = rand.nextInt(width);
-			y = rand.nextInt(height);
+			x = rand.nextInt(height);
+			y = rand.nextInt(width);
 			
 			if (map[x][y] != 1) {//not pn mine
 				map[x][y] = 3;//flag
@@ -78,15 +78,15 @@ public class Ground {
 	}
 
 	private void countMine() {
-		mineNumber = new int[width][height];
+		mineNumber = new int[height][width];
 
-		for (int i = 0; i < width; ++i) {
-			for (int j = 0; j < height; ++j) {
+		for (int i = 0; i < height; ++i) {
+			for (int j = 0; j < width; ++j) {
 				int sum = 0;
 
 				for (int x = -1 ; x < 2; ++x) {
 					for (int y = -1; y < 2; ++y) {
-						if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height && map[x+i][y+j] == 1)
+						if (x + i >= 0 && x + i < height && y + j >= 0 && y + j < width && map[x+i][y+j] == 1)
 							++sum;
 					}
 				}
@@ -96,7 +96,7 @@ public class Ground {
 	}
 
 	public void expand(int x, int y) {
-		if (x >= 0 && x < width && y >= 0 && y < height && expanded[x][y] == false) {
+		if (x >= 0 && x < height && y >= 0 && y < width && expanded[x][y] == false) {
 			if (mineNumber[x][y] == 0) {
 				expanded[x][y] = true;
 				map[x][y] = 2;
