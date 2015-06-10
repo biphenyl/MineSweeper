@@ -31,7 +31,7 @@ public class IconCollection {
     
     public IconCollection() {
     	whiteIcon[0] = new ImageIcon("pic/whiteIcon.JPG");
-    	dice[0] = new ImageIcon("pic/diceRolling2.gif");
+    	dice[0] = new ImageIcon("pic/dice96/dice.gif");
     	hlGreenIcon[0] = new ImageIcon("pic/hlGreenIcon.jpg");
     	
     	for(int i = 1 ; i < whiteIcon.length ; i++) {
@@ -39,7 +39,7 @@ public class IconCollection {
     		hlGreenIcon[i] = new ImageIcon("pic/hlGreenIcon" + i + ".jpg");
     	}
     	for(int i = 1 ; i < dice.length ; i++) {
-    		dice[i] = new ImageIcon("pic/dice" + i + ".gif");
+    		dice[i] = new ImageIcon("pic/dice96/dice" + i + ".gif");
     	}
     }
  

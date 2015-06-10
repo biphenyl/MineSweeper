@@ -37,6 +37,7 @@ public class GUI extends JFrame
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
 	private int playerNum, width, height, totalMine;
 	private int strenth1, strenth2;
+	private int dontCleanX, dontCleanY;
 	private Player fighter1, fighter2;
 	private ArrayList<JComponent> guiComponents_btn = new ArrayList<JComponent>(900);
 	private ArrayList<JComponent> guiComponents_label = new ArrayList<JComponent>(100);
@@ -75,28 +76,9 @@ public class GUI extends JFrame
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
 		
-/*<<<<<<< HEAD
-		JLabel testLabel = new JLabel("HI");
-		testLabel.setBounds(14, 800, 60, 60);
-		testLabel.setIcon(icon.diceRolling);
-		testLabel.setVisible(true);
-		leftPanel.add(testLabel);
-		guiComponents_label.add(testLabel);
-		
-		diceButton = new JButton("Dice");
-		diceButton.setBounds(14, 888, 99, 27);
-=======
-		//JLabel testLabel = new JLabel("HI");
-		//testLabel.setBounds(14, 800, 60, 60);
-		//testLabel.setIcon(icon.diceRolling);
-		//testLabel.setVisible(false);
-		//leftPanel.add(testLabel);
-		//guiComponents_label.add(testLabel);*/
-		
 		diceButton = new JButton(icon.dice[4]);
 		diceButton.setPressedIcon(icon.dice[0]);
 		diceButton.setBounds(20, 811, 96, 96);
-//>>>>>>> 2c91c9e45314aabfd5cc45d24e971804a8d1f37c
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
@@ -162,6 +144,10 @@ public class GUI extends JFrame
 		initPlayer();
 		
 		dice = new Dice();
+		
+		dontCleanY = -1;
+		dontCleanX = -1;
+		
 		rePaint();
 	}
 
@@ -235,6 +221,11 @@ public class GUI extends JFrame
 		// test to show mines
 		for(int i=0; i<height; ++i){
 			for(int j=0; j<width; ++j){
+				if(i==dontCleanX && j==dontCleanY){
+					dontCleanX = -1;
+					dontCleanY = -1;
+					continue;
+				}
 				if(map[i][j]==0){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(icon.grayOldIcon);
@@ -565,6 +556,7 @@ public class GUI extends JFrame
 	{
 		MineButton mb = (MineButton)guiComponents_btn.get(x*width+y);
 		mb.setIcon(icon.explodeSmall);
+		mb.setRolloverIcon(icon.explodeSmall);
 		if(state==moving)
 		{
 			mp = 0;
@@ -574,21 +566,16 @@ public class GUI extends JFrame
 			System.out.println((p.getOrder()+1) + "P killed by player");
 		}
 		updateScore(p, -100);
+		
 		final int x1 = x, y1 = y;
-		/*try
-		{
-			Thread.sleep(500);
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		dontCleanX = x;
+		dontCleanY = y;
 		int delay = 1000; 
 		ActionListener exploder = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				MineButton mb = (MineButton)guiComponents_btn.get(x1*width+y1);
 				mb.setIcon(icon.whiteIcon[ground.getMapXY(x1, y1)]);
+				mb.setRolloverIcon(null);
 				
 			}
 		};
@@ -633,7 +620,7 @@ public class GUI extends JFrame
             	case moving:
 	                if(moveable(x, y)){	
         				playerMove(x, y);
-            			rePaint();
+        				rePaint();
             			
             			System.out.println("mp: "+ mp + " state: " + state);
             			if(mp>0 && state==moving){
@@ -692,13 +679,8 @@ public class GUI extends JFrame
 			if(state != dicing && state!=fightingPart1 && state!=fightingPart2)
 				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
 			else{
-				//change picture
-				
-				//give number
-				
-				//give number and change dice's picture
-				
 				diceButton.setIcon(icon.dice[0]);
+				diceButton.setRolloverIcon(icon.dice[0]);
 				temp = dice.throwDice();
 				final int temp2 = temp;
 				//change picture
@@ -706,6 +688,7 @@ public class GUI extends JFrame
 				ActionListener diceRoller = new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						diceButton.setIcon(icon.dice[temp2]);
+						diceButton.setRolloverIcon(null);
 						System.out.println("inner MP: " + mp);
 					}
 				};
