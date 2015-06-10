@@ -235,10 +235,10 @@ public class GUI extends JFrame
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
 					
-					if(moveable(i, j))
+					/*if(moveable(i, j))
 						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
-					//else
-						//mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					else
+						mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));*/
 					
 				}
 				else if(map[i][j]==2){
