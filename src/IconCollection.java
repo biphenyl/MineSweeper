@@ -16,8 +16,10 @@ public class IconCollection {
 	public final ImageIcon[] whiteIcon = new ImageIcon[9];
 	
 	public final ImageIcon flag = new ImageIcon("pic/flag.jpg");
-	public final ImageIcon sweeper = new ImageIcon("pic/sweeper.jpg");
+	public final ImageIcon sweeper = new ImageIcon("pic/sweeper.png");
 	public final ImageIcon sweeperTrue = new ImageIcon("pic/sweeperTrue.jpg");
+	public final ImageIcon sweepableIcon = new ImageIcon("pic/sweepableIcon.jpg");
+	public final ImageIcon sweeperOn = new ImageIcon("pic/sweeperOn.png");
 	
 	public final ImageIcon explode = new ImageIcon("pic/explode.gif");
     public final ImageIcon explodeSmall = new ImageIcon("pic/explodeSmall.gif");

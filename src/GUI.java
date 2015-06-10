@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.IvParameterSpec;
+import javax.management.MBeanAttributeInfo;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,6 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
 import javax.swing.JLabel;
@@ -30,7 +32,7 @@ public class GUI extends JFrame
 
 	private JPanel contentPane, leftPanel, rightPanel;
 	private JLabel lbMovement;
-	private ArrayList<Player> players = new ArrayList<Player>(4);
+	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
 	private int playerNum, width, height, totalMine;
@@ -38,7 +40,7 @@ public class GUI extends JFrame
 	private ArrayList<JComponent> guiComponents_label = new ArrayList<JComponent>(100);
 	private Dice dice;
 	private Ground ground;
-	private JButton diceButton;
+	private JButton diceButton, sweeperButton;
 	private IconCollection icon = new IconCollection();
 	
 	private final int moving = 0;
@@ -48,12 +50,12 @@ public class GUI extends JFrame
 	 * Create the frame.
 	 */
 	@SuppressWarnings("deprecation")
-	public GUI()
+	public GUI(int playerNum, int width, int height, int totalMine)
 	{
-		playerNum = 4;
-		width = 30;
-		height = 30;
-		totalMine = 300;
+		this.playerNum = playerNum;
+		this.width = width;
+		this.height = height;
+		this.totalMine = totalMine;
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
@@ -93,13 +95,13 @@ public class GUI extends JFrame
 		diceButton.addActionListener(new DiceListener());
 		leftPanel.add(diceButton);
 		
-		JButton sweeper = new JButton(icon.sweeper);
-		sweeper.setPressedIcon(icon.sweeperTrue);
-		sweeper.setBounds(123, 865, 50, 50);
-		leftPanel.add(sweeper);
+		sweeperButton = new JButton(icon.sweeper);
+		sweeperButton.setBounds(126, 811, 96, 96);
+		sweeperButton.addActionListener(new SweepListener());
+		leftPanel.add(sweeperButton);
 	
 		int[] yLabel = {33, 213, 393, 573};
-		for(int i=0; i<4; ++i){
+		for(int i=0; i<playerNum; ++i){
 			JLabel lb = new JLabel((i+1) + "P");
 			lb.setFont(new Font("Arial", Font.PLAIN, 36));
 			lb.setBounds(33, yLabel[i], 60, 56);
@@ -121,7 +123,7 @@ public class GUI extends JFrame
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbMovement.setBounds(17, 825, 208, 27);
+		lbMovement.setBounds(14, 722, 208, 27);
 		leftPanel.add(lbMovement);
 		
 		rightPanel = new JPanel();
@@ -129,16 +131,16 @@ public class GUI extends JFrame
 		contentPane.add(rightPanel);
 		rightPanel.setLayout(null);
 		
-		for(int i=0; i<30; ++i)
+		for(int i=0; i<height; ++i)
 		{
-			for(int j=0; j<30; ++j)
+			for(int j=0; j<width; ++j)
 			{
 				MineButton btn = new MineButton(i, j);
 				btn.setSize(30, 30);
 				btn.setLocation(j*30, i*30);
 				//btn.setEnabled(false);
 				btn.addActionListener(new ButtonListener());
-				btn.pos = i*30+j;
+				btn.pos = i*width+j;
 				guiComponents_btn.add(btn);
 				rightPanel.add(btn);
 			}
@@ -158,9 +160,9 @@ public class GUI extends JFrame
 	{
 		try
 		{
-			frame = new GUI();
-			frame.setLocationRelativeTo(null);
-			frame.setVisible(true);
+			//frame = new GUI();
+			this.setLocationRelativeTo(null);
+			this.setVisible(true);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -170,36 +172,43 @@ public class GUI extends JFrame
 
 	private void initPlayer()
 	{
-		for(int i=0; i<4; ++i)
+		players = new ArrayList<Player>(playerNum);
+		
+		for(int i=0; i<playerNum; ++i)
 			players.add(new Player());
 		
 		players.get(0).setInitPos(1, 1);
 		players.get(0).setIcon(icon.redIcon);
 		players.get(1).setInitPos(28, 1);
 		players.get(1).setIcon(icon.blueExIcon);
-		players.get(2).setInitPos(1, 28);
-		players.get(2).setIcon(icon.greenIcon);
-		players.get(3).setInitPos(28, 28);
-		players.get(3).setIcon(icon.yellowIcon);
+		if(playerNum>=3){
+			players.get(2).setInitPos(1, 28);
+			players.get(2).setIcon(icon.greenIcon);
+		}
+		if(playerNum==4){
+			players.get(3).setInitPos(28, 28);
+			players.get(3).setIcon(icon.yellowIcon);
+		}
 		
 		nowPlayer = 0;
 		
 		ground.expand(1, 1);
-		ground.expand(28, 1);
-		ground.expand(1, 28);
-		ground.expand(28, 28);
+		ground.expand(height-2, 1);
+		if(playerNum>=3)
+			ground.expand(1, width-2);
+		if(playerNum==4)
+			ground.expand(height-2, width-2);
 	}
 	
 	private void nextTurn()
 	{
 		state = dicing;
 		
+		sweeperButton.setIcon(icon.sweeper);
 		if(++nowPlayer >= playerNum)
 			nowPlayer = 0;
 		System.out.println("醬汁");
 		
-		JLabel lb = (JLabel)guiComponents_label.get(0);
-		lb.setIcon(icon.dice[0]);
 	}
 	
 	private void rePaint(){
@@ -239,10 +248,10 @@ public class GUI extends JFrame
 			}
 		}
 		
-		for(int i=0; i<4; ++i)
+		for(int i=0; i<playerNum; ++i)
 		{
 			mb = (MineButton)guiComponents_btn.get(players.get(i).getX()*30+players.get(i).getY());
-			mb.setIcon(icon.yellowIcon);
+			mb.setIcon(players.get(i).getIcon());
 		}
 		
 		if(mp>0){
@@ -252,7 +261,7 @@ public class GUI extends JFrame
 		
 	}
 	
-	private void highLight(int x, int y, int color)
+	private void highLightMove(int x, int y)
 	{
 		MineButton mb;
 		ImageIcon moveHL = icon.greenMoveExIcon;
@@ -352,7 +361,7 @@ public class GUI extends JFrame
 		Player p = players.get(nowPlayer);
 		
 		if(ground.getMapXY(x, y)==1){
-			die(p);
+			die(p, x, y);
 			ground.sweep(x, y);
 			return;
 		}
@@ -361,28 +370,140 @@ public class GUI extends JFrame
 		}
 		
 		p.setXY(x, y);
-		System.out.println(x + " " + y);
-		lbMovement.setText("剩餘步數: " + --mp);
+		System.out.println(x + "<move>" + y);
+		updateMP(--mp);
 		
 		ground.expand(x, y);
 	}
 	
-	private void sweepable(int x,  int y){
+	private void highLightSweep(int x, int y){
+		MineButton mb;
+		ImageIcon sweepHL = icon.sweepableIcon;
+		int mbState;
 		
+		rePaint();
+		
+		if(x>0 && y>0){
+			mb = (MineButton)guiComponents_btn.get(x*width+y-width-1);
+			mbState = ground.getMapXY(x-1, y-1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x-1) + " and " + (y-1));
+			}
+		}
+		
+		if(x>0){
+			mb = (MineButton)guiComponents_btn.get(x*width+y-width);
+			mbState = ground.getMapXY(x-1, y);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x-1) + " and " + (y));
+			}
+		}
+		
+		if(x>0 && y<width-1){
+			mb = (MineButton)guiComponents_btn.get(x*width+y-width+1);
+			mbState = ground.getMapXY(x-1, y+1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x-1) + " and " + (y+1));
+			}
+		}
+		
+		if(y>0){
+			mb = (MineButton)guiComponents_btn.get(x*width+y-1);
+			mbState = ground.getMapXY(x, y-1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x) + " and " + (y-1));
+			}
+		}
+		
+		if(y<width-1){
+			mb = (MineButton)guiComponents_btn.get(x*width+y+1);
+			mbState = ground.getMapXY(x, y+1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x) + " and " + (y+1));
+			}
+		}
+		
+		if(x<height-1 && y>0){
+			mb = (MineButton)guiComponents_btn.get(x*width+y+width-1);
+			mbState = ground.getMapXY(x+1, y-1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x+1) + " and " + (y-1));
+			}
+		}
+		
+		if(x<height-1){
+			mb = (MineButton)guiComponents_btn.get(x*width+y+width);
+			mbState = ground.getMapXY(x+1, y);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x+1) + " and " + (y));
+			}
+		}
+		
+		if(x<height-1 && y<width-1){
+			mb = (MineButton)guiComponents_btn.get(x*width+y+width+1);
+			mbState = ground.getMapXY(x+1, y+1);
+			if(mbState==0 || mbState==1){
+				mb.setIcon(sweepHL);
+				System.out.println((x+1) + " and " + (y+1));
+			}
+		}
 	}
 	
-	private void sweep(){
+	private boolean sweepable(int x,  int y)
+	{
+		Player p = players.get(nowPlayer);
+		int rx, ry;
+		rx = x-p.getX();
+		ry = y-p.getY();
+		System.out.println("rx: " + rx + ", ry: " + ry);
+		if(!(rx==0 && ry==0)){
+			if((rx >= -1 && rx <= 1) && (ry >= -1 && ry <= 1)){
+				if(ground.getMapXY(x, y)!=2 && ground.getMapXY(x, y)!=3)
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	private void sweep(int x, int y)
+	{
+		if(ground.getMapXY(x, y)==1){
+			updateScore(players.get(nowPlayer), 50);
+		}
 		
+		MineButton mb = (MineButton)guiComponents_btn.get(x*30+y);
+		mb.setIcon(icon.whiteIcon[ground.getMineNumXY(x, y)]);
+		ground.sweep(x, y);
+		updateMP(--mp);
 	}
 
-	private void die(Player p)
+	private void updateScore(Player p, int score)
 	{
-		int x = p.getX();
-		int y = p.getY();
+		p.addScore(score);
+		JLabel lb = (JLabel)guiComponents_label.get(nowPlayer*2+1);
+		lb.setText("Score: " + Integer.toString(p.getScore()));
 		
-		MineButton mb = (MineButton)guiComponents_btn.get(x*30 + y);
-		mb.setIcon(icon.redIcon);
-		
+		System.out.println("Score updated!");
+	}
+	
+	private void updateMP(int n){
+		lbMovement.setText("剩餘步數: " + mp);
+	}
+	
+	private void die(Player p, int x, int y)
+	{
+		MineButton mb = (MineButton)guiComponents_btn.get(x*30+y);
+		mb.setIcon(icon.explodeSmall);
+		mp = 0;
+		final int x1 = x, y1 = y;
 		/*try
 		{
 			Thread.sleep(500);
@@ -392,17 +513,24 @@ public class GUI extends JFrame
 			e.printStackTrace();
 		}
 		*/
+		int delay = 1500; 
+		ActionListener exploder = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				MineButton mb = (MineButton)guiComponents_btn.get(x1*30+y1);
+				mb.setIcon(icon.whiteIcon[ground.getMapXY(x1, y1)]);
+				updateScore(players.get(nowPlayer), -100);
+				rePaint();
+			}
+		};
+		Timer timer = new Timer(delay, exploder);
+		timer.setRepeats(false);
+		timer.start();
 		
-		mp=0;
-	
-		p.respawn();
-		p.addScore(-100);
-		
-		rePaint();
+		players.get(nowPlayer).respawn();
 	}
 	
 	private void getFlag(){
-		players.get(nowPlayer).addScore(200);
+		updateScore(players.get(nowPlayer), 200);
 		ground.generateflag();
 	}
 	
@@ -437,7 +565,7 @@ public class GUI extends JFrame
             			rePaint();
             			
             			if(mp>0){
-            				highLight(x, y, 1);
+            				highLightMove(x, y);
             				mb.setIcon(players.get(nowPlayer).getIcon());
             			}	
         			}
@@ -447,7 +575,18 @@ public class GUI extends JFrame
                 }
             	else if(state == sweeping)
             	{
-            		mb.setIcon(icon.whiteIcon[0]);
+            		if(sweepable(x, y)){
+            			sweep(x, y);
+            			repaint();
+            			
+            			if(mp>0){
+            				Player p = players.get(nowPlayer);
+            				highLightSweep(p.getX(), p.getY());
+            			}
+            		}
+            		else{
+            			JOptionPane.showMessageDialog(frame,"請選擇可清除的格子");
+            		}
             	}
             	else if(state == dicing)
             	{
@@ -456,6 +595,7 @@ public class GUI extends JFrame
         		
         		if(mp <= 0 && state != dicing)
         		{
+        			rePaint();
         			nextTurn();
         			lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
         		}
@@ -483,18 +623,25 @@ public class GUI extends JFrame
 				
 				
 				//give number and change dice's picture
-				mp = dice.throwDice();
-				JButton diceButton = (JButton) e.getSource();
-				diceButton.setIcon(icon.dice[mp]);
 				
-				state = moving;
-				lbMovement.setText("剩餘步數: " + mp);
-				highLight(players.get(nowPlayer).getX(), players.get(nowPlayer).getY(), 1);
-				
-				JLabel lb = (JLabel)guiComponents_label.get(0);
-				lb.setIcon(new ImageIcon("pic/dice/d000" + mp + ".gif"));
-				System.out.println(lb.getText());
+				diceButton.setIcon(icon.dice[0]);
 				//change picture
+				
+				int delay = 500; 
+				ActionListener diceRoller = new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						mp = dice.throwDice();
+							
+						diceButton.setIcon(icon.dice[mp]);
+							
+						state = moving;
+						updateMP(mp);
+						highLightMove(players.get(nowPlayer).getX(), players.get(nowPlayer).getY());
+					}
+				};
+				Timer timer = new Timer(delay, diceRoller);
+				timer.setRepeats(false);
+				timer.start();
 				
 			}
 			
@@ -508,14 +655,30 @@ public class GUI extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			// TODO Auto-generated method stub
+			int x = players.get(nowPlayer).getX();
+			int y = players.get(nowPlayer).getY();
+			
 			if(state == dicing){
 				JOptionPane.showMessageDialog(frame,"你必須先骰骰子");
 			}
 			else if(state == sweeping){
 				state = moving;
+				sweeperButton.setIcon(icon.sweeper);
+				rePaint();
+				highLightMove(x, y);
 			}
 			else if(state == moving){
-				state = sweeping;
+				int[][] opened = ground.getMap();
+				if(opened[x-1][y-1]==0 || opened[x-1][y]==0 || opened[x-1][y+1]==0 || opened[x][y-1]==0 
+						|| opened[x][y+1]==0 || opened[x+1][y-1]==0 || opened[x+1][y]==0 || opened[x+1][y+1]==0){
+					state = sweeping;
+					sweeperButton.setIcon(icon.sweeperOn);
+					rePaint();
+					highLightSweep(x, y);
+				}
+				else{
+					JOptionPane.showMessageDialog(frame,"附近沒有可清除的格子");
+				}
 			}
 			// sweeper-1
 			// highlight sweep-able button
