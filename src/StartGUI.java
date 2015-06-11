@@ -1,6 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Image;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -9,6 +12,11 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -24,20 +32,41 @@ public class StartGUI extends JFrame {
 	private JTextField numberOfMine_t, width_t, height_t;
 	private JButton buttonStart, buttonLeave;
 	private JLabel label1, label2, label3, label4, label5, label6;
-	private JComboBox numberSelect;
+	private JComboBox<JComponent> numberSelect;
 	private int numberOfMine, width, height, numberOfPlayer;
 	/**
 	 * Create the frame.
 	 */
 	public StartGUI() {
 		
+		this.setTitle("Mine Sweeper");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(760, 390, 400, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
+		contentPane.setOpaque(false);
 		setContentPane(contentPane);
+		
+		((JPanel)this.getContentPane()).setOpaque(false);
+		JLabel background = new JLabel();
+		background.setBounds(50, -25, 400, 300);
+		background.setIcon(new IconCollection().silverMine);
+		//this.add(background);
+		this.getLayeredPane().add(background, new Integer(Integer.MIN_VALUE));
+		/*BufferedImage myImage = null;
+		try
+		{
+			myImage = ImageIO.read( new File("pic/silverMine.png"));
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.setContentPane(new ImagePanel(myImage));
+		//this.setContentPane(new ImagePanel(new IconCollection().sliverMine));*/
+		
 		
 		buttonStart = new JButton("開始");
 		buttonStart.setBounds(100, 210, 80, 25);
@@ -110,6 +139,18 @@ public class StartGUI extends JFrame {
 		gui.run();
 		
 		this.setVisible(false);
+	}
+	
+	class ImagePanel extends JComponent {
+	    private Image image;
+	    public ImagePanel(Image image) {
+	        this.image = image;
+	    }
+	    @Override
+	    protected void paintComponent(Graphics g) {
+	        super.paintComponent(g);
+	        g.drawImage(image, 0, 0, this);
+	    }
 	}
 	
 	class StartListener implements ActionListener

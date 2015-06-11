@@ -34,7 +34,7 @@ public class GUI extends JFrame
 
 	private StartGUI father;
 	private JPanel contentPane, rightPanel, leftPanel;
-	private JLabel lbMovement, lbNowplayer, lbGameMsg, lbStrenth1, lbStrenth2;
+	private JLabel lbMovement, lbGameMsg, lbStrenth1, lbStrenth2;
 	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
@@ -91,20 +91,25 @@ public class GUI extends JFrame
 		sweeperButton.addActionListener(new SweepListener());
 		rightPanel.add(sweeperButton);
 	
-		int[] yLabel = {33, 213, 393, 573};
+		int[] yLabel = {33, 153, 273, 393};
 		for(int i=0; i<playerNum; ++i){
 			JLabel lb = new JLabel((i+1) + "P");
 			lb.setFont(new Font("Arial", Font.PLAIN, 36));
-			lb.setBounds(33, yLabel[i], 60, 56);
+			lb.setBounds(33, yLabel[i], 60, 40);
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 			
 			lb = new JLabel("Score: 0");
 			lb.setFont(new Font("Arial", Font.PLAIN, 24));
-			lb.setBounds(33, yLabel[i]+70, 135, 27);
+			lb.setBounds(33, yLabel[i]+40, 135, 27);
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 			
+			lb = new JLabel("Sweeper: 0");
+			lb.setFont(new Font("Arial", Font.PLAIN, 24));
+			lb.setBounds(33, yLabel[i]+67, 135, 27);
+			guiComponents_label.add(lb);
+			rightPanel.add(lb);
 		}
 		
 		JLabel lblx = new JLabel("5x");
@@ -117,19 +122,14 @@ public class GUI extends JFrame
 		lbMovement.setBounds(20, 751, 208, 27);
 		rightPanel.add(lbMovement);
 		
-		lbNowplayer = new JLabel("現在玩家是: 1P");
-		lbNowplayer.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbNowplayer.setBounds(20, 711, 167, 27);
-		rightPanel.add(lbNowplayer);
-		
 		lbStrenth2 = new JLabel("");
 		lbStrenth2.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbStrenth2.setBounds(20, 654, 167, 27);
+		lbStrenth2.setBounds(20, 711, 167, 27);
 		rightPanel.add(lbStrenth2);
 		
 		lbStrenth1 = new JLabel("");
 		lbStrenth1.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbStrenth1.setBounds(20, 614, 167, 27);
+		lbStrenth1.setBounds(20, 671, 167, 27);
 		rightPanel.add(lbStrenth1);
 		
 		leftPanel = new JPanel();
@@ -144,7 +144,7 @@ public class GUI extends JFrame
 		contentPane.add(lbGameMsg);
 		
 		JButton btnRestart = new JButton("重新開始");
-		btnRestart.setBounds(1083, 0, 99, 27);
+		btnRestart.setBounds(1119, 1, 99, 27);
 		btnRestart.addActionListener(new RestartListener());
 		contentPane.add(btnRestart);
 		
@@ -234,7 +234,6 @@ public class GUI extends JFrame
 			nowPlayer = 0;
 		
 		lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
-		lbNowplayer.setText("現在玩家是: " + (nowPlayer+1) + "P");
 		System.out.println("醬汁");
 		
 	}
@@ -576,12 +575,26 @@ public class GUI extends JFrame
 		msgTime = new Date().getTime();
 	}
 	
+	private void cleanStrenth(){
+		int delay = 3000; 
+		ActionListener msgPlayer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				lbStrenth1.setText("");
+				lbStrenth2.setText("");
+			}
+		};
+		Timer timer = new Timer(delay, msgPlayer);
+		timer.setRepeats(false);
+		timer.start();
+	}
+	
 	private void fight(Player p1, Player p2){
 		//show fight animation
 		if(state==moving){
 			fighter1 = p1;
 			fighter2 = p2;
 			updateGameMsg(lbGameMsg, "開始戰鬥！請" + Integer.toString(p1.getOrder()+1) +"P先擲骰子");
+			lbMovement.setText("");
 			SoundEffect.BEFOREBATTLE.play();
 			state = fightingPart1;
 		}
@@ -595,18 +608,20 @@ public class GUI extends JFrame
 				die(p1, p1.getX(), p1.getY());
 				updateScore(p2, p1.getScore()/2);
 				updateScore(p1, -(p1.getScore()/2));
-				updateGameMsg(lbGameMsg, (fighter2.getOrder()+1) + "P獲勝！");
+				updateGameMsg(lbGameMsg, (fighter2.getOrder()+1) + "P獲勝！ 進入下個回合");
 			}
 			else if(strenth1>strenth2){
 				die(p2, p2.getX(), p2.getY());
 				updateScore(p1, p2.getScore()/2);
 				updateScore(p2, -(p2.getScore()/2));
-				updateGameMsg(lbGameMsg, (fighter1.getOrder()+1) + "P獲勝！");
+				updateGameMsg(lbGameMsg, (fighter1.getOrder()+1) + "P獲勝！進入下個回合");
 			}
 			else{
-				updateGameMsg(lbGameMsg, "平手！");
+				updateGameMsg(lbGameMsg, "平手！進入下個回合");
 			}
+			cleanStrenth();
 			nextTurn();
+			lbMovement.setText("請" + (nowPlayer+1) + "P擲骰子!");
 		}
 	}
 	
@@ -702,7 +717,7 @@ public class GUI extends JFrame
             			}	
         			}
         			else {
-        				JOptionPane.showMessageDialog(frame,"請選擇可移動的格子");
+        				updateGameMsg(lbGameMsg, "請選擇可移動的格子");
 					}
 	                break;
             	case sweeping:
@@ -716,17 +731,17 @@ public class GUI extends JFrame
             			}
             		}
             		else{
-            			JOptionPane.showMessageDialog(frame,"請選擇可清除的格子");
+            			updateGameMsg(lbGameMsg, "請選擇可清除的格子");
             		}
             		break;
             	case dicing:
-            		JOptionPane.showMessageDialog(frame,"你必須先骰骰子");
+            		updateGameMsg(lbGameMsg, "你必須先骰骰子");
             		break;
             	case fightingPart1:
-            		JOptionPane.showMessageDialog(frame,"戰鬥中！請" + (fighter1.getOrder()+1) + "P擲骰子");
+            		updateGameMsg(lbGameMsg, "戰鬥中！請" + (fighter1.getOrder()+1) + "P擲骰子");
             		break;
             	case fightingPart2:
-            		JOptionPane.showMessageDialog(frame,"戰鬥中！請" + (fighter2.getOrder()+1) + "P擲骰子");
+            		updateGameMsg(lbGameMsg, "戰鬥中！請" + (fighter2.getOrder()+1) + "P擲骰子");
             		break;
             	}
         		if(mp <= 0 && state != dicing)
@@ -748,8 +763,9 @@ public class GUI extends JFrame
 		{
 			// TODO Auto-generated method stub
 			int temp = mp;
-			if(state != dicing && state!=fightingPart1 && state!=fightingPart2)
-				JOptionPane.showMessageDialog(frame,"請在地圖上移動");
+			if(state != dicing && state!=fightingPart1 && state!=fightingPart2){
+				updateGameMsg(lbGameMsg, "請在地圖上移動");
+			}
 			else{
 				diceButton.setIcon(icon.dice[0]);
 				diceButton.setRolloverIcon(icon.dice[0]);
@@ -801,7 +817,7 @@ public class GUI extends JFrame
 			int y = players.get(nowPlayer).getY();
 			
 			if(state == dicing){
-				JOptionPane.showMessageDialog(frame,"你必須先骰骰子");
+				updateGameMsg(lbGameMsg, "你必須先骰骰子");
 			}
 			else if(state == sweeping){
 				state = moving;
@@ -817,7 +833,7 @@ public class GUI extends JFrame
 					highLightSweep(x, y);
 				}
 				else{
-					JOptionPane.showMessageDialog(frame,"附近沒有可清除的格子");
+					updateGameMsg(lbGameMsg, "附近沒有可清除的格子");
 				}
 			}
 			// sweeper-1
