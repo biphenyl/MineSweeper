@@ -53,10 +53,7 @@ public enum SoundEffect {
     public void alwaysPlay() {
         if (volume != Volume.MUTE) {
             clip.setFramePosition(0);
-            while (true) {
-                clip.start();
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            }
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
     static void init() {

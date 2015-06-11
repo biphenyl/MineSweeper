@@ -212,7 +212,9 @@ public class GUI extends JFrame
 		{
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
-			//SoundEffect.BGM.alwaysPlay();
+			BGMThread b = new BGMThread();
+			b.start();
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -229,6 +231,7 @@ public class GUI extends JFrame
 		
 		players.get(0).setInitPos(1, 1);
 		players.get(0).setIcon(icon.redIcon);
+		players.get(0).addScore(950);
 		
 		JLabel lb = new JLabel();
 		lb.setBounds(80, 35, 32, 32);
@@ -480,78 +483,6 @@ public class GUI extends JFrame
 				}
 			}
 		}
-		
-		/*if(x>0 && y>0){
-			mb = (MineButton)guiComponents_btn.get(x*width+y-width-1);
-			mbState = ground.getMapXY(x-1, y-1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x-1) + " and " + (y-1));
-			}
-		}
-		
-		if(x>0){
-			mb = (MineButton)guiComponents_btn.get(x*width+y-width);
-			mbState = ground.getMapXY(x-1, y);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x-1) + " and " + (y));
-			}
-		}
-		
-		if(x>0 && y<width-1){
-			mb = (MineButton)guiComponents_btn.get(x*width+y-width+1);
-			mbState = ground.getMapXY(x-1, y+1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x-1) + " and " + (y+1));
-			}
-		}
-		
-		if(y>0){
-			mb = (MineButton)guiComponents_btn.get(x*width+y-1);
-			mbState = ground.getMapXY(x, y-1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x) + " and " + (y-1));
-			}
-		}
-		
-		if(y<width-1){
-			mb = (MineButton)guiComponents_btn.get(x*width+y+1);
-			mbState = ground.getMapXY(x, y+1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x) + " and " + (y+1));
-			}
-		}
-		
-		if(x<height-1 && y>0){
-			mb = (MineButton)guiComponents_btn.get(x*width+y+width-1);
-			mbState = ground.getMapXY(x+1, y-1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x+1) + " and " + (y-1));
-			}
-		}
-		
-		if(x<height-1){
-			mb = (MineButton)guiComponents_btn.get(x*width+y+width);
-			mbState = ground.getMapXY(x+1, y);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x+1) + " and " + (y));
-			}
-		}
-		
-		if(x<height-1 && y<width-1){
-			mb = (MineButton)guiComponents_btn.get(x*width+y+width+1);
-			mbState = ground.getMapXY(x+1, y+1);
-			if(mbState==0 || mbState==1){
-				mb.setIcon(sweepHL);
-				System.out.println((x+1) + " and " + (y+1));
-			}
-		}*/
 	}
 	
 	private boolean sweepable(int x,  int y)
@@ -580,7 +511,7 @@ public class GUI extends JFrame
 		else
 			updateGameMsg(lbGameMsg, "沒掃到東西ㄏㄏ");
 		
-		MineButton mb = (MineButton)guiComponents_btn.get(x*+y);
+		MineButton mb = (MineButton)guiComponents_btn.get(x*width+y);
 		mb.setIcon(icon.whiteIcon[ground.getMineNumXY(x, y)]);
 		ground.sweep(x, y);
 		updateMP(--mp);
@@ -591,9 +522,6 @@ public class GUI extends JFrame
 		p.addScore(score);
 		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*3+1);
 		lb.setText("Score: " + Integer.toString(p.getScore()));
-		
-		if(victoryCheck())
-			victory();
 		
 		System.out.println("Score updated!");
 	}
@@ -669,6 +597,9 @@ public class GUI extends JFrame
 			cleanStrenth();
 			nextTurn();
 			lbMovement.setText("請" + (nowPlayer+1) + "P擲骰子!");
+			
+			if(victoryCheck())
+				victory();
 		}
 	}
 	
@@ -719,16 +650,17 @@ public class GUI extends JFrame
 	
 	private boolean victoryCheck()
 	{
-		if(players.get(nowPlayer).getScore()>=1000)
-			return true;
-		else 
-			return false;
+		for(int i=0; i<playerNum; ++i){
+			if(players.get(i).getScore()>=1000)
+				return true;
+		}
+		return false;
 	}
 
 	private void victory()
 	{
+		System.out.println("Victory");
 		int[][] map = ground.getMap();
-		int[][] mineNumber = ground.getMineNumber();
 		MineButton mb;
 		// test to show mines
 		for(int i=0; i<height; ++i){
@@ -738,6 +670,14 @@ public class GUI extends JFrame
 					mb.setIcon(icon.explodeSmall);
 				}
 			}
+		}
+	}
+
+	class BGMThread extends Thread {
+		@Override
+		public void run() {
+			
+			SoundEffect.BGM.alwaysPlay();
 		}
 	}
 
@@ -796,6 +736,9 @@ public class GUI extends JFrame
         			rePaint();
         			nextTurn();
         		}
+        		
+        		if(victoryCheck())
+        			victory();
             }
             System.out.println(mp);
             
