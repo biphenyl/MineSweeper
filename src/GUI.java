@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import javax.swing.SwingConstants;
 
 public class GUI extends JFrame
@@ -38,7 +39,7 @@ public class GUI extends JFrame
 	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
-	private int playerNum, width, height, totalMine;
+	private int playerNum, width, height, totalMine, sweepNum;
 	private int strenth1, strenth2;
 	private int dontCleanX, dontCleanY, volumeState;
 	private long msgTime;
@@ -66,6 +67,7 @@ public class GUI extends JFrame
 		this.height = height;
 		this.totalMine = totalMine;
 		this.father = father;
+		sweepNum =  (height+width)*totalMine/(2*height*width);
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
@@ -73,12 +75,20 @@ public class GUI extends JFrame
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
+		contentPane.setOpaque(false);
 		setContentPane(contentPane);
+		
+		JLabel background = new JLabel();
+		background.setBounds(0, 0, 1200, 1000);
+		background.setIcon(icon.bigMine);
+		//contentPane.add(background);
+		this.getLayeredPane().add(background, new Integer(Integer.MIN_VALUE));
 		
 		rightPanel = new JPanel();
 		rightPanel.setBounds(934, 33, 248, 920);
 		contentPane.add(rightPanel);
 		rightPanel.setLayout(null);
+		rightPanel.setOpaque(false);
 		
 		diceButton = new JButton(icon.dice[4]);
 		diceButton.setPressedIcon(icon.dice[0]);
@@ -99,23 +109,30 @@ public class GUI extends JFrame
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 			
-			lb = new JLabel("Score: 0");
-			lb.setFont(new Font("Arial", Font.PLAIN, 24));
+			lb = new JLabel("分數: 0");
+			lb.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
 			lb.setBounds(33, yLabel[i]+40, 135, 27);
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 			
-			lb = new JLabel("Sweeper: 0");
-			lb.setFont(new Font("Arial", Font.PLAIN, 24));
+			lb = new JLabel("掃雷器: " + sweepNum);
+			lb.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
 			lb.setBounds(33, yLabel[i]+67, 135, 27);
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 		}
 		
-		JLabel lblx = new JLabel("5x");
-		lblx.setFont(new Font("新細明體", Font.PLAIN, 24));
-		lblx.setBounds(33, 200, 57, 19);
-		rightPanel.add(lblx);
+		JLabel lbMention = new JLabel("達到1000分");
+		lbMention.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
+		lbMention.setBounds(33, yLabel[playerNum-1]+120, 300, 27);
+		guiComponents_label.add(lbMention);
+		rightPanel.add(lbMention);
+		
+		lbMention = new JLabel("          以獲得勝利！");
+		lbMention.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
+		lbMention.setBounds(33, yLabel[playerNum-1]+155, 300, 27);
+		guiComponents_label.add(lbMention);
+		rightPanel.add(lbMention);
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
@@ -136,6 +153,7 @@ public class GUI extends JFrame
 		leftPanel.setBounds(0, 33, 934, 920);
 		contentPane.add(leftPanel);
 		leftPanel.setLayout(null);
+		leftPanel.setOpaque(false);
 		
 		lbGameMsg = new JLabel("");
 		lbGameMsg.setHorizontalAlignment(SwingConstants.CENTER);
@@ -159,11 +177,13 @@ public class GUI extends JFrame
 				// TODO Auto-generated method stub
 				if(volumeState==1){
 					SoundEffect.volume = SoundEffect.volume.MUTE;
+					SoundEffect.BGM.loopStop();
 					btnMute.setIcon(icon.volume);
 					volumeState = 0;
 				}
 				else{
 					SoundEffect.volume = SoundEffect.volume.ON;
+					SoundEffect.BGM.alwaysPlay();
 					btnMute.setIcon(icon.mute);
 					volumeState = 1;
 				}
@@ -225,13 +245,13 @@ public class GUI extends JFrame
 	private void initPlayer()
 	{
 		players = new ArrayList<Player>(playerNum);
-		
 		for(int i=0; i<playerNum; ++i)
 			players.add(new Player(i));
 		
 		players.get(0).setInitPos(1, 1);
 		players.get(0).setIcon(icon.redIcon);
-		players.get(0).addScore(950);
+		players.get(0).addScore(970);
+		players.get(0).addSweeper(sweepNum);
 		
 		JLabel lb = new JLabel();
 		lb.setBounds(80, 35, 32, 32);
@@ -240,6 +260,7 @@ public class GUI extends JFrame
 		
 		players.get(1).setInitPos(height-2, 1);
 		players.get(1).setIcon(icon.blueExIcon);
+		players.get(1).addSweeper(sweepNum);
 		
 		lb = new JLabel();
 		lb.setBounds(80, 155, 32, 32);
@@ -249,6 +270,7 @@ public class GUI extends JFrame
 		if(playerNum>=3){
 			players.get(2).setInitPos(1, width-2);
 			players.get(2).setIcon(icon.greenIcon);
+			players.get(2).addSweeper(sweepNum);
 			
 			lb = new JLabel();
 			lb.setBounds(80, 275, 32, 32);
@@ -258,6 +280,7 @@ public class GUI extends JFrame
 		if(playerNum==4){
 			players.get(3).setInitPos(height-2, width-2);
 			players.get(3).setIcon(icon.yellowIcon);
+			players.get(3).addSweeper(sweepNum);
 			
 			lb = new JLabel();
 			lb.setBounds(80, 395, 32, 32);
@@ -504,13 +527,23 @@ public class GUI extends JFrame
 	
 	private void sweep(int x, int y)
 	{
+		Player p = players.get(nowPlayer);
+		if(p.getSweeperNumber()<=0){
+			updateGameMsg(lbGameMsg, "你沒有掃雷器了");
+			return;
+		}
+		
 		if(ground.getMapXY(x, y)==1){
-			updateScore(players.get(nowPlayer), 50);
-			updateGameMsg(lbGameMsg, "掃雷成功！　" + (players.get(nowPlayer).getOrder()+1) + "P得到50分");
+			updateScore(p, 30);
+			updateGameMsg(lbGameMsg, "掃雷成功！　" + (players.get(nowPlayer).getOrder()+1) + "P得到30分");
 		}
 		else
 			updateGameMsg(lbGameMsg, "沒掃到東西ㄏㄏ");
 		
+		p.addSweeper(-1);
+		JLabel lb = (JLabel)guiComponents_label.get(nowPlayer*3+2);
+		lb.setText("掃雷器: " + p.getSweeperNumber());
+		System.out.println("sweeper:" + p.getSweeperNumber());
 		MineButton mb = (MineButton)guiComponents_btn.get(x*width+y);
 		mb.setIcon(icon.whiteIcon[ground.getMineNumXY(x, y)]);
 		ground.sweep(x, y);
@@ -521,7 +554,7 @@ public class GUI extends JFrame
 	{
 		p.addScore(score);
 		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*3+1);
-		lb.setText("Score: " + Integer.toString(p.getScore()));
+		lb.setText("分數: " + Integer.toString(p.getScore()));
 		
 		System.out.println("Score updated!");
 	}
@@ -598,8 +631,7 @@ public class GUI extends JFrame
 			nextTurn();
 			lbMovement.setText("請" + (nowPlayer+1) + "P擲骰子!");
 			
-			if(victoryCheck())
-				victory();
+			victoryCheck();
 		}
 	}
 	
@@ -646,23 +678,35 @@ public class GUI extends JFrame
 		ground.cleanFlag(x, y);
 		updateScore(players.get(nowPlayer), 300);
 		ground.generateFlag();
+		
+		JLabel lb;
+		updateGameMsg(lbGameMsg, (players.get(nowPlayer).getOrder()+1) + "P搶到一個旗子，得到300分，所有人掃雷器獲得補充");
+		for(int i=0; i<playerNum; ++i){
+			if(i==nowPlayer)
+				players.get(i).addSweeper(sweepNum);
+			else 
+				players.get(i).addSweeper(sweepNum/2);
+			
+			lb = (JLabel)guiComponents_label.get(i*3+2);
+			lb.setText("掃雷器: " + players.get(i).getSweeperNumber());
+		}
 	}
 	
-	private boolean victoryCheck()
+	private void victoryCheck()
 	{
 		for(int i=0; i<playerNum; ++i){
-			if(players.get(i).getScore()>=1000)
-				return true;
+			if(players.get(i).getScore()>=1000){
+				victory(i);
+				break;
+			}
 		}
-		return false;
 	}
 
-	private void victory()
+	private void victory(int pn)
 	{
 		System.out.println("Victory");
 		int[][] map = ground.getMap();
 		MineButton mb;
-		// test to show mines
 		for(int i=0; i<height; ++i){
 			for(int j=0; j<width; ++j){
 				if(map[i][j]==1){
@@ -670,6 +714,21 @@ public class GUI extends JFrame
 					mb.setIcon(icon.explodeSmall);
 				}
 			}
+		}
+		SoundEffect.BGM.loopStop();
+		SoundEffect.VICTORY.play();
+		
+		int mType=JOptionPane.INFORMATION_MESSAGE;
+		String options[] = {"重新開始", "離開"};
+		int opt=JOptionPane.showOptionDialog(frame,(pn+1)+"P獲勝了！要重新開始嗎？","勝利！",
+                JOptionPane.YES_NO_OPTION,mType, null, options, "取消");
+		
+		if(opt==JOptionPane.YES_OPTION){
+			father.run();
+			dispose();
+		}
+		else if(opt==JOptionPane.NO_OPTION){
+			System.exit(0);
 		}
 	}
 
@@ -737,8 +796,7 @@ public class GUI extends JFrame
         			nextTurn();
         		}
         		
-        		if(victoryCheck())
-        			victory();
+        		victoryCheck();
             }
             System.out.println(mp);
             
@@ -803,8 +861,9 @@ public class GUI extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			// TODO Auto-generated method stub
-			int x = players.get(nowPlayer).getX();
-			int y = players.get(nowPlayer).getY();
+			Player p = players.get(nowPlayer); 
+			int x = p.getX();
+			int y = p.getY();
 			
 			if(state == dicing){
 				updateGameMsg(lbGameMsg, "你必須先骰骰子");
@@ -826,9 +885,6 @@ public class GUI extends JFrame
 					updateGameMsg(lbGameMsg, "附近沒有可清除的格子");
 				}
 			}
-			// sweeper-1
-			// highlight sweep-able button
-			// sweep
 		}
 		
 		private boolean surroundSweep(int x, int y){
@@ -862,6 +918,7 @@ public class GUI extends JFrame
 	                JOptionPane.YES_NO_OPTION,mType, null, options, "取消");
 			
 			if(opt==JOptionPane.YES_OPTION){
+				SoundEffect.BGM.loopStop();
 				father.run();
 				dispose();
 			}

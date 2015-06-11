@@ -19,7 +19,8 @@ import javax.sound.sampled.LineUnavailableException;
 public enum SoundEffect {
     EXPLODE("sound/explode.wav"),
     BEFOREBATTLE("sound/beforeBattle.wav"),
-    BGM("sound/bgm.wav");
+    BGM("sound/bgm.wav"),
+    VICTORY("sound/victory.wav");
 
     public static enum Volume {
         MUTE, ON

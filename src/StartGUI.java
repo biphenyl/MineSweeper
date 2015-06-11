@@ -49,7 +49,6 @@ public class StartGUI extends JFrame {
 		contentPane.setOpaque(false);
 		setContentPane(contentPane);
 		
-		((JPanel)this.getContentPane()).setOpaque(false);
 		JLabel background = new JLabel();
 		background.setBounds(50, -25, 400, 300);
 		background.setIcon(new IconCollection().silverMine);

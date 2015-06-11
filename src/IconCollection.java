@@ -9,6 +9,7 @@ public class IconCollection {
 	public final ImageIcon greenMoveExIcon = new ImageIcon("pic/greenMoveIcon.jpg");
 	public final ImageIcon yellowIcon2 = new ImageIcon("pic/yellowIcon2.jpg");
 	public final ImageIcon silverMine = new ImageIcon("pic/silverMine.png");
+	public final ImageIcon bigMine = new ImageIcon("pic/bigMine.png");
 	public final ImageIcon mute = new ImageIcon("pic/mute.png");
 	public final ImageIcon volume = new ImageIcon("pic/volume.png");
 	

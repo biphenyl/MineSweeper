@@ -15,7 +15,7 @@ public class Player {
 		y = 0;
 		this.order = order;
 		score = 0;
-		sweeperNumber = 10;
+		sweeperNumber = 0;
 	}
 
 	public int getX() {
@@ -73,8 +73,9 @@ public class Player {
 	}
 
 	public void addSweeper(int n) {
-		if (n < 0) return;
 		sweeperNumber += n;
+		if(sweeperNumber<=0)
+			sweeperNumber = 0;
 	}
 
 	public int robbed(int n) {
