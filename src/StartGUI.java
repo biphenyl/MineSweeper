@@ -84,16 +84,19 @@ public class StartGUI extends JFrame {
 		width_t.setBounds(200, 75, 40, 25);
 		contentPane.add(width_t);
 		width_t.setColumns(10);
+		width_t.setText(Integer.toString(15));
 		
 		height_t = new JTextField();
 		height_t.setColumns(10);
 		height_t.setBounds(250, 75, 40, 25);
 		contentPane.add(height_t);
+		height_t.setText(Integer.toString(15));
 		
 		numberOfMine_t = new JTextField();
 		numberOfMine_t.setBounds(200, 110, 50, 25);
 		contentPane.add(numberOfMine_t);
 		numberOfMine_t.setColumns(3);
+		numberOfMine_t.setText(Integer.toString(75));
 		
 	}
 
@@ -104,7 +107,7 @@ public class StartGUI extends JFrame {
 	
 	private void startGame()
 	{
-		GUI gui = new GUI(numberOfPlayer, width, height, numberOfMine);
+		GUI gui = new GUI(this, numberOfPlayer, width, height, numberOfMine);
 		gui.run();
 		
 		this.setVisible(false);

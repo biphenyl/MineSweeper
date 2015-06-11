@@ -12,6 +12,7 @@ public class Ground {
 		this.width = width;
 		this.height = height;
 		expanded = new boolean[height][width];
+		mineNumber = new int[height][width];
 		
 		generateMap(num);
 		map[height/2][width/2] = 3;
@@ -78,8 +79,7 @@ public class Ground {
 	}
 
 	private void countMine() {
-		mineNumber = new int[height][width];
-
+		
 		for (int i = 0; i < height; ++i) {
 			for (int j = 0; j < width; ++j) {
 				int sum = 0;
@@ -118,6 +118,12 @@ public class Ground {
 	public void sweep(int x, int y) {
 		map[x][y] = 2;
 		countMine();
+	}
+	
+	public void cleanFlag(int x, int y){
+		if(map[x][y]==3){
+			map[x][y] = 2; 
+		}
 	}
 
 	public int[][] getMap() {

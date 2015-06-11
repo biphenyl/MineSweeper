@@ -25,10 +25,10 @@ public class IconCollection {
     public final ImageIcon[] hlGreenIcon = new ImageIcon[9];
     public final ImageIcon hlGrayOldIconWithFlag = new ImageIcon("pic/hlGrayOldIconWithFlag.jpg");
     
-    public final ImageIcon[] blueExIcon = new ImageIcon[9];
-    public final ImageIcon[] redIcon = new ImageIcon[9];
-    public final ImageIcon[] greenIcon = new ImageIcon[9];
-    public final ImageIcon[] yellowIcon = new ImageIcon[9];
+    public final ImageIcon[] blueExIcon = new ImageIcon[10];
+    public final ImageIcon[] redIcon = new ImageIcon[10];
+    public final ImageIcon[] greenIcon = new ImageIcon[10];
+    public final ImageIcon[] yellowIcon = new ImageIcon[10];
     
     public IconCollection() {
     	whiteIcon[0] = new ImageIcon("pic/whiteIcon.JPG");
@@ -50,6 +50,11 @@ public class IconCollection {
     	for(int i = 1 ; i < dice.length ; i++) {
     		dice[i] = new ImageIcon("pic/dice96/dice" + i + ".gif");
     	}
+    	
+    	blueExIcon[9] = new ImageIcon("pic/blueSwordIcon.jpg");
+    	redIcon[9] = new ImageIcon("pic/redSwordIcon.jpg");
+    	greenIcon[9] = new ImageIcon("pic/greenSwordIcon.jpg");
+    	yellowIcon[9] = new ImageIcon("pic/yellowSwordIcon.jpg");
     }
  
 }

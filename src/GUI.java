@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 import javax.crypto.spec.IvParameterSpec;
 import javax.management.MBeanAttributeInfo;
@@ -31,14 +32,16 @@ import javax.swing.SwingConstants;
 public class GUI extends JFrame
 {
 
-	private JPanel contentPane, leftPanel, rightPanel;
-	private JLabel lbMovement, lbNowplayer, lbGameMessage;
+	private StartGUI father;
+	private JPanel contentPane, rightPanel, leftPanel;
+	private JLabel lbMovement, lbNowplayer, lbGameMsg, lbStrenth1, lbStrenth2;
 	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
 	private int playerNum, width, height, totalMine;
 	private int strenth1, strenth2;
 	private int dontCleanX, dontCleanY;
+	private long msgTime;
 	private Player fighter1, fighter2;
 	private ArrayList<JComponent> guiComponents_btn = new ArrayList<JComponent>(900);
 	private ArrayList<JComponent> guiComponents_label = new ArrayList<JComponent>(100);
@@ -52,17 +55,17 @@ public class GUI extends JFrame
 	private final int dicing = 2;
 	private final int fightingPart1 = 3;
 	private final int fightingPart2 = 4;
-	private final int fightingPart3 = 5;
 	/**
 	 * Create the frame.
 	 */
 	@SuppressWarnings("deprecation")
-	public GUI(int playerNum, int height, int width, int totalMine)
+	public GUI(final StartGUI father, int playerNum, int height, int width, int totalMine)
 	{
 		this.playerNum = playerNum;
 		this.width = width;
 		this.height = height;
 		this.totalMine = totalMine;
+		this.father = father;
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
@@ -72,21 +75,21 @@ public class GUI extends JFrame
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
-		leftPanel = new JPanel();
-		leftPanel.setBounds(934, 33, 248, 920);
-		contentPane.add(leftPanel);
-		leftPanel.setLayout(null);
+		rightPanel = new JPanel();
+		rightPanel.setBounds(934, 33, 248, 920);
+		contentPane.add(rightPanel);
+		rightPanel.setLayout(null);
 		
 		diceButton = new JButton(icon.dice[4]);
 		diceButton.setPressedIcon(icon.dice[0]);
 		diceButton.setBounds(20, 811, 96, 96);
 		diceButton.addActionListener(new DiceListener());
-		leftPanel.add(diceButton);
+		rightPanel.add(diceButton);
 		
 		sweeperButton = new JButton(icon.sweeper);
 		sweeperButton.setBounds(126, 811, 96, 96);
 		sweeperButton.addActionListener(new SweepListener());
-		leftPanel.add(sweeperButton);
+		rightPanel.add(sweeperButton);
 	
 		int[] yLabel = {33, 213, 393, 573};
 		for(int i=0; i<playerNum; ++i){
@@ -94,41 +97,56 @@ public class GUI extends JFrame
 			lb.setFont(new Font("Arial", Font.PLAIN, 36));
 			lb.setBounds(33, yLabel[i], 60, 56);
 			guiComponents_label.add(lb);
-			leftPanel.add(lb);
+			rightPanel.add(lb);
 			
 			lb = new JLabel("Score: 0");
 			lb.setFont(new Font("Arial", Font.PLAIN, 24));
 			lb.setBounds(33, yLabel[i]+70, 120, 27);
 			guiComponents_label.add(lb);
-			leftPanel.add(lb);
+			rightPanel.add(lb);
 			
 		}
 		
 		JLabel lblx = new JLabel("5x");
 		lblx.setFont(new Font("新細明體", Font.PLAIN, 24));
 		lblx.setBounds(33, 200, 57, 19);
-		leftPanel.add(lblx);
+		rightPanel.add(lblx);
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbMovement.setBounds(14, 722, 208, 27);
-		leftPanel.add(lbMovement);
+		lbMovement.setBounds(20, 751, 208, 27);
+		rightPanel.add(lbMovement);
 		
 		lbNowplayer = new JLabel("現在玩家是: 1P");
 		lbNowplayer.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbNowplayer.setBounds(20, 664, 202, 45);
-		leftPanel.add(lbNowplayer);
+		lbNowplayer.setBounds(20, 711, 167, 27);
+		rightPanel.add(lbNowplayer);
 		
-		rightPanel = new JPanel();
-		rightPanel.setBounds(0, 33, 934, 920);
-		contentPane.add(rightPanel);
-		rightPanel.setLayout(null);
+		lbStrenth2 = new JLabel("");
+		lbStrenth2.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
+		lbStrenth2.setBounds(20, 654, 167, 27);
+		rightPanel.add(lbStrenth2);
 		
-		lbGameMessage = new JLabel("");
-		lbGameMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		lbGameMessage.setFont(new Font("微軟正黑體", Font.BOLD, 24));
-		lbGameMessage.setBounds(14, 0, 1154, 26);
-		contentPane.add(lbGameMessage);
+		lbStrenth1 = new JLabel("");
+		lbStrenth1.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
+		lbStrenth1.setBounds(20, 614, 167, 27);
+		rightPanel.add(lbStrenth1);
+		
+		leftPanel = new JPanel();
+		leftPanel.setBounds(0, 33, 934, 920);
+		contentPane.add(leftPanel);
+		leftPanel.setLayout(null);
+		
+		lbGameMsg = new JLabel("");
+		lbGameMsg.setHorizontalAlignment(SwingConstants.CENTER);
+		lbGameMsg.setFont(new Font("微軟正黑體", Font.BOLD, 24));
+		lbGameMsg.setBounds(14, 1, 1071, 26);
+		contentPane.add(lbGameMsg);
+		
+		JButton btnRestart = new JButton("重新開始");
+		btnRestart.setBounds(1083, 0, 99, 27);
+		btnRestart.addActionListener(new RestartListener());
+		contentPane.add(btnRestart);
 		
 		int startX = (920-30*height)/2;
 		int startY = (934-30*width)/2;
@@ -143,7 +161,7 @@ public class GUI extends JFrame
 				btn.addActionListener(new ButtonListener());
 				btn.pos = i*width+j;
 				guiComponents_btn.add(btn);
-				rightPanel.add(btn);
+				leftPanel.add(btn);
 			}
 		}
 
@@ -157,6 +175,7 @@ public class GUI extends JFrame
 		
 		dontCleanY = -1;
 		dontCleanX = -1;
+		msgTime = new Date().getTime();
 		
 		rePaint();
 	}
@@ -216,6 +235,7 @@ public class GUI extends JFrame
 		if(++nowPlayer >= playerNum)
 			nowPlayer = 0;
 		
+		lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
 		lbNowplayer.setText("現在玩家是: " + (nowPlayer+1) + "P");
 		System.out.println("醬汁");
 		
@@ -268,12 +288,6 @@ public class GUI extends JFrame
 			mb = (MineButton)guiComponents_btn.get(x*width+y);
 			mb.setIcon(players.get(i).getIcon()[mineNumber[x][y]]);
 		}
-		
-		if(mp>0){
-			//hLMove(x, y);
-			
-		}
-		
 	}
 	
 	private void highLightMove(int x, int y)
@@ -304,6 +318,7 @@ public class GUI extends JFrame
 		{
 			mbState = ground.getMapXY(x+1, y);
 			mb = (MineButton)guiComponents_btn.get(x*width+y+width);
+			
 			if(mbState==0){
 				mb.setIcon(moveHL);
 			}
@@ -354,6 +369,13 @@ public class GUI extends JFrame
 			}
 		}
 		
+		for(int i=0; i<playerNum; ++i){
+			Player p = players.get(i);
+			if(moveable(p.getX(), p.getY())){
+				mb = (MineButton)guiComponents_btn.get(p.getX()*width+p.getY());
+				mb.setIcon(p.getIcon()[9]);
+			}
+		}
 	}
 	
 	private boolean moveable(int x, int y)
@@ -381,7 +403,7 @@ public class GUI extends JFrame
 			return;
 		}
 		else if(ground.getMapXY(x, y)==3){
-			getFlag();
+			getFlag(x, y);
 		}
 		else{
 			for(int i=0; i<playerNum; ++i){
@@ -409,8 +431,21 @@ public class GUI extends JFrame
 		int mbState;
 		
 		rePaint();
+		int[][] step = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 		
-		if(x>0 && y>0){
+		for(int i=0; i<8; ++i){
+			int a = x+step[i][0];
+			int b = y+step[i][1];
+			if(a>=0 && a<=height-1 && b>=0 && b<=width-1){
+				mb = (MineButton)guiComponents_btn.get(a*width+b);
+				mbState = ground.getMapXY(a, b);
+				if(mbState==0 || mbState==1){
+					mb.setIcon(sweepHL);
+				}
+			}
+		}
+		
+		/*if(x>0 && y>0){
 			mb = (MineButton)guiComponents_btn.get(x*width+y-width-1);
 			mbState = ground.getMapXY(x-1, y-1);
 			if(mbState==0 || mbState==1){
@@ -480,7 +515,7 @@ public class GUI extends JFrame
 				mb.setIcon(sweepHL);
 				System.out.println((x+1) + " and " + (y+1));
 			}
-		}
+		}*/
 	}
 	
 	private boolean sweepable(int x,  int y)
@@ -504,7 +539,10 @@ public class GUI extends JFrame
 	{
 		if(ground.getMapXY(x, y)==1){
 			updateScore(players.get(nowPlayer), 50);
+			updateGameMsg(lbGameMsg, "掃雷成功！　" + (players.get(nowPlayer).getOrder()+1) + "P得到50分");
 		}
+		else
+			updateGameMsg(lbGameMsg, "沒掃到東西ㄏㄏ");
 		
 		MineButton mb = (MineButton)guiComponents_btn.get(x*+y);
 		mb.setIcon(icon.whiteIcon[ground.getMineNumXY(x, y)]);
@@ -521,8 +559,28 @@ public class GUI extends JFrame
 		System.out.println("Score updated!");
 	}
 	
-	private void updateMP(int n){
+	private void updateMP(int n)
+	{
 		lbMovement.setText("剩餘步數: " + mp);
+	}
+	
+	private void updateGameMsg(JLabel lb, String msg)
+	{
+		final JLabel templb = lb;
+		lb.setText(msg);
+		
+		int delay = 7000; 
+		ActionListener msgPlayer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				if(new Date().getTime()-msgTime>=7000)
+					templb.setText("");
+			}
+		};
+		Timer timer = new Timer(delay, msgPlayer);
+		timer.setRepeats(false);
+		timer.start();
+		
+		msgTime = new Date().getTime();
 	}
 	
 	private void fight(Player p1, Player p2){
@@ -530,11 +588,13 @@ public class GUI extends JFrame
 		if(state==moving){
 			fighter1 = p1;
 			fighter2 = p2;
-			lbMovement.setText("開始戰鬥！請" + Integer.toString(p1.getOrder()+1) +"P先擲骰子");
+			updateGameMsg(lbGameMsg, "開始戰鬥！請" + Integer.toString(p1.getOrder()+1) +"P先擲骰子");
+			SoundEffect.BEFOREBATTLE.play();
 			state = fightingPart1;
 		}
 		else if(state==fightingPart1){
-			lbMovement.setText("換" + Integer.toString(p2.getOrder()+1) +"P擲骰子");
+			updateGameMsg(lbGameMsg, "換" + Integer.toString(p2.getOrder()+1) +"P擲骰子");
+			
 			state = fightingPart2;
 		}
 		else if(state==fightingPart2){
@@ -542,16 +602,16 @@ public class GUI extends JFrame
 				die(p1, p1.getX(), p1.getY());
 				updateScore(p2, p1.getScore()/2);
 				updateScore(p1, -(p1.getScore()/2));
-				lbMovement.setText((fighter2.getOrder()+1) + "P獲勝！");
+				updateGameMsg(lbGameMsg, (fighter2.getOrder()+1) + "P獲勝！");
 			}
 			else if(strenth1>strenth2){
 				die(p2, p2.getX(), p2.getY());
 				updateScore(p1, p2.getScore()/2);
 				updateScore(p2, -(p2.getScore()/2));
-				lbMovement.setText((fighter1.getOrder()+1) + "P獲勝！");
+				updateGameMsg(lbGameMsg, (fighter1.getOrder()+1) + "P獲勝！");
 			}
 			else{
-				lbMovement.setText("平手！");
+				updateGameMsg(lbGameMsg, "平手！");
 			}
 			nextTurn();
 		}
@@ -576,11 +636,13 @@ public class GUI extends JFrame
 		final int x1 = x, y1 = y;
 		dontCleanX = x;
 		dontCleanY = y;
+		
 		int delay = 1000; 
+		
 		ActionListener exploder = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				MineButton mb = (MineButton)guiComponents_btn.get(x1*width+y1);
-				mb.setIcon(icon.whiteIcon[ground.getMapXY(x1, y1)]);
+				mb.setIcon(icon.whiteIcon[ground.getMineNumXY(x1, y1)]);
 				mb.setRolloverIcon(null);
 				
 			}
@@ -594,8 +656,9 @@ public class GUI extends JFrame
 		mb.setIcon(p.getIcon()[0]);
 	}
 	
-	private void getFlag(){
-		updateScore(players.get(nowPlayer), 200);
+	private void getFlag(int x, int y){
+		ground.cleanFlag(x, y);
+		updateScore(players.get(nowPlayer), 300);
 		ground.generateFlag();
 	}
 	
@@ -657,14 +720,15 @@ public class GUI extends JFrame
             		break;
             	case fightingPart1:
             		JOptionPane.showMessageDialog(frame,"戰鬥中！請" + (fighter1.getOrder()+1) + "P擲骰子");
+            		break;
             	case fightingPart2:
             		JOptionPane.showMessageDialog(frame,"戰鬥中！請" + (fighter2.getOrder()+1) + "P擲骰子");
+            		break;
             	}
         		if(mp <= 0 && state != dicing)
         		{
         			rePaint();
         			nextTurn();
-        			lbMovement.setText((nowPlayer+1) + "P 請擲骰子");
         		}
             }
             System.out.println(mp);
@@ -714,10 +778,12 @@ public class GUI extends JFrame
 			else if(state==fightingPart1){
 				strenth1 = temp;
 				fight(fighter1, fighter2);
+				lbStrenth1.setText((fighter1.getOrder()+1) + "P擲出: " + temp);
 			}
 			else if(state==fightingPart2){
 				strenth2 = temp;
 				fight(fighter1, fighter2);
+				lbStrenth2.setText((fighter2.getOrder()+1) + "P擲出: " + temp);
 			}
 		}
 		
@@ -759,18 +825,38 @@ public class GUI extends JFrame
 		
 		private boolean surroundSweep(int x, int y){
 			int[][] opened = ground.getMap();
-			if(opened[x-1][y-1]==0 || opened[x-1][y]==0 || opened[x-1][y+1]==0 || opened[x][y-1]==0 
-					|| opened[x][y+1]==0 || opened[x+1][y-1]==0 || opened[x+1][y]==0 || opened[x+1][y+1]==0){
-				return true;
-			}
-			else if(opened[x-1][y-1]==1 || opened[x-1][y]==1 || opened[x-1][y+1]==1 || opened[x][y-1]==1 
-					|| opened[x][y+1]==1 || opened[x+1][y-1]==1 || opened[x+1][y]==1 || opened[x+1][y+1]==1){
-				return true;
-			}
-			else 
-				return false;
-				
+			int[][] step = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 			
+			for(int i=0; i<8; ++i){
+				int a = x+step[i][0];
+				int b = y+step[i][1];
+				if(a>=0 && a<=height-1 && b>=0 && b<=width-1){
+					if(opened[a][b]==0 || opened[a][b]==1)
+						return true;
+					
+				}
+			}
+			return false;
+		}
+		
+	}
+	
+	class RestartListener implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			// TODO Auto-generated method stub
+			int mType=JOptionPane.INFORMATION_MESSAGE;
+			String options[] = {"確認", "取消"};
+			int opt=JOptionPane.showOptionDialog(frame,"確定要重新開始?","確認",
+	                JOptionPane.YES_NO_OPTION,mType, null, options, "取消");
+			
+			if(opt==JOptionPane.YES_OPTION){
+				father.run();
+				dispose();
+			}
 		}
 		
 	}
