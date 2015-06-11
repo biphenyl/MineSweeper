@@ -171,7 +171,7 @@ public class GUI extends JFrame
 		
 		SoundEffect.init();
 		SoundEffect.volume = SoundEffect.Volume.ON;
-		SoundEffect.BGM.alwaysPlay();
+		
 		
 		dontCleanY = -1;
 		dontCleanX = -1;
@@ -189,6 +189,9 @@ public class GUI extends JFrame
 		{
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
+			BGMThread b = new BGMThread();
+			b.start();
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -677,6 +680,13 @@ public class GUI extends JFrame
 					mb.setIcon(icon.explodeSmall);
 				}
 			}
+		}
+	}
+
+	class BGMThread extends Thread {
+		@Override
+		public void run() {
+			SoundEffect.BGM.alwaysPlay();
 		}
 	}
 
