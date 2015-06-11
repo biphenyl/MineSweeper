@@ -56,6 +56,10 @@ public enum SoundEffect {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
+    public void loopStop() {
+        if (clip.isRunning())
+            clip.stop();
+    }
     static void init() {
         values(); //call the constructor for all the elements
     }
