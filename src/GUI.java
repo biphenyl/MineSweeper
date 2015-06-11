@@ -26,12 +26,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.SwingConstants;
 
 public class GUI extends JFrame
 {
 
 	private JPanel contentPane, leftPanel, rightPanel;
-	private JLabel lbMovement, lbNowplayer;
+	private JLabel lbMovement, lbNowplayer, lbGameMessage;
 	private ArrayList<Player> players;
 	private GUI frame;
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
@@ -123,6 +124,12 @@ public class GUI extends JFrame
 		contentPane.add(rightPanel);
 		rightPanel.setLayout(null);
 		
+		lbGameMessage = new JLabel("");
+		lbGameMessage.setHorizontalAlignment(SwingConstants.CENTER);
+		lbGameMessage.setFont(new Font("微軟正黑體", Font.BOLD, 24));
+		lbGameMessage.setBounds(14, 0, 1154, 26);
+		contentPane.add(lbGameMessage);
+		
 		int startX = (920-30*height)/2;
 		int startY = (934-30*width)/2;
 		for(int i=0; i<height; ++i)
@@ -144,6 +151,9 @@ public class GUI extends JFrame
 		initPlayer();
 		
 		dice = new Dice();
+		
+		SoundEffect.init();
+		SoundEffect.volume = SoundEffect.Volume.ON;
 		
 		dontCleanY = -1;
 		dontCleanX = -1;
@@ -215,8 +225,6 @@ public class GUI extends JFrame
 		
 		int[][] map = ground.getMap();
 		int[][] mineNumber = ground.getMineNumber();
-		int x = players.get(nowPlayer).getX();
-		int y = players.get(nowPlayer).getY();
 		MineButton mb;
 		// test to show mines
 		for(int i=0; i<height; ++i){
@@ -233,7 +241,7 @@ public class GUI extends JFrame
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
-					mb.setIcon(new ImageIcon("pic/grayOldIcon.jpg"));
+					mb.setIcon(icon.grayOldIcon);
 					
 					/*if(moveable(i, j))
 						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
@@ -255,8 +263,10 @@ public class GUI extends JFrame
 		
 		for(int i=0; i<playerNum; ++i)
 		{
-			mb = (MineButton)guiComponents_btn.get(players.get(i).getX()*width+players.get(i).getY());
-			mb.setIcon(players.get(i).getIcon());
+			int x = players.get(i).getX();
+			int y = players.get(i).getY();
+			mb = (MineButton)guiComponents_btn.get(x*width+y);
+			mb.setIcon(players.get(i).getIcon()[mineNumber[x][y]]);
 		}
 		
 		if(mp>0){
@@ -505,7 +515,7 @@ public class GUI extends JFrame
 	private void updateScore(Player p, int score)
 	{
 		p.addScore(score);
-		JLabel lb = (JLabel)guiComponents_label.get(nowPlayer*2+1);
+		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*2+1);
 		lb.setText("Score: " + Integer.toString(p.getScore()));
 		
 		System.out.println("Score updated!");
@@ -520,7 +530,7 @@ public class GUI extends JFrame
 		if(state==moving){
 			fighter1 = p1;
 			fighter2 = p2;
-			lbMovement.setText("請" + Integer.toString(p1.getOrder()+1) +"P先擲骰子");
+			lbMovement.setText("開始戰鬥！請" + Integer.toString(p1.getOrder()+1) +"P先擲骰子");
 			state = fightingPart1;
 		}
 		else if(state==fightingPart1){
@@ -530,25 +540,20 @@ public class GUI extends JFrame
 		else if(state==fightingPart2){
 			if(strenth1<strenth2){
 				die(p1, p1.getX(), p1.getY());
-				p2.addScore(p1.getScore()/2);
-				p1.addScore(-(p1.getScore()/2));
+				updateScore(p2, p1.getScore()/2);
+				updateScore(p1, -(p1.getScore()/2));
 				lbMovement.setText((fighter2.getOrder()+1) + "P獲勝！");
-				
-				nextTurn();
 			}
 			else if(strenth1>strenth2){
 				die(p2, p2.getX(), p2.getY());
-				p1.addScore(p2.getScore()/2);
-				p2.addScore(-(p2.getScore()/2));
+				updateScore(p1, p2.getScore()/2);
+				updateScore(p2, -(p2.getScore()/2));
 				lbMovement.setText((fighter1.getOrder()+1) + "P獲勝！");
-				
-				state = moving;
-				mp = 0;
 			}
 			else{
 				lbMovement.setText("平手！");
-				nextTurn();
 			}
+			nextTurn();
 		}
 	}
 	
@@ -560,12 +565,13 @@ public class GUI extends JFrame
 		if(state==moving)
 		{
 			mp = 0;
+			updateScore(p, -100);
 			System.out.println((p.getOrder()+1) + "P killed by mine");
 		}
 		else {
 			System.out.println((p.getOrder()+1) + "P killed by player");
 		}
-		updateScore(p, -100);
+		SoundEffect.EXPLODE.play();
 		
 		final int x1 = x, y1 = y;
 		dontCleanX = x;
@@ -585,7 +591,7 @@ public class GUI extends JFrame
 		
 		p.respawn();
 		mb = (MineButton)guiComponents_btn.get(p.getX()*width+p.getY());
-		mb.setIcon(p.getIcon());
+		mb.setIcon(p.getIcon()[0]);
 	}
 	
 	private void getFlag(){
@@ -625,7 +631,7 @@ public class GUI extends JFrame
             			System.out.println("mp: "+ mp + " state: " + state);
             			if(mp>0 && state==moving){
             				highLightMove(x, y);
-            				mb.setIcon(players.get(nowPlayer).getIcon());
+            				mb.setIcon(players.get(nowPlayer).getIcon()[ground.getMineNumXY(x, y)]);
             			}	
         			}
         			else {

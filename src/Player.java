@@ -8,7 +8,7 @@ public class Player {
 	private int sweeperNumber;
 	private int order;
 	private int[] initPos = new int[2];
-	private ImageIcon icon;
+	private ImageIcon[] icon;
 
 	public Player(int order) {
 		x = 0;
@@ -34,7 +34,7 @@ public class Player {
 		return sweeperNumber;
 	}
 	
-	public ImageIcon getIcon(){
+	public ImageIcon[] getIcon(){
 		return icon;
 	}
 	
@@ -63,7 +63,7 @@ public class Player {
 		this.y = y;
 	}
 	
-	public void setIcon(ImageIcon imgName){
+	public void setIcon(ImageIcon imgName[]){
 		icon = imgName;
 	}
 	
