@@ -7,30 +7,47 @@ public class Ground {
 	private int[][] map; // 0: close  1: mine  2: open  3: flag
 	private int[][] mineNumber;
 	private boolean[][] expanded;
-
+	private int preX;
+	private int preY;
+	
 	public Ground(int height, int width, int num) {
 		this.width = width;
 		this.height = height;
 		expanded = new boolean[height][width];
-		
+		this.preX = -1;
+		this.preY = -1;
 		generateMap(num);
 		map[height/2][width/2] = 3;
 		
 		countMine();
 	}
 	public void generateFlag() {
+		findFlag();
 		boolean succeed = false;
 		Random rand = new Random();
+		int x = -1, y = -1;
 		while (!succeed) {
-			int x = rand.nextInt(height);
-			int y = rand.nextInt(width);
-			if (map[x][y] != 1) {//not pn mine
-				map[x][y] = 3;//flag
+			x = rand.nextInt(height);
+			y = rand.nextInt(width);
+			if (map[x][y] != 1) { //not pn mine
+				map[x][y] = 3; //flag
+				
 				succeed = true;
-			}
+			}	
 		}	
+		if(preX != -1)
+			map[preX][preY] = 2;
 	}
-	
+	private void findFlag(){
+		loop: for(int i=0 ;i< height; ++i)
+			for(int j=0; j< width; ++j)
+				if(map[i][j] == 3)
+				{
+					preX = i;
+					preY = j;
+					break loop;
+				}
+	}
 	private void generateMap(int num) {
 		Random rand = new Random();
 		
@@ -60,22 +77,6 @@ public class Ground {
 			}
 		}
 	}
-	
-	public void generateflag() {
-		boolean succeed=false;
-		Random rand = new Random();
-		int x, y;
-		
-		while (!succeed) {
-			x = rand.nextInt(height);
-			y = rand.nextInt(width);
-			
-			if (map[x][y] != 1) {//not pn mine
-				map[x][y] = 3;//flag
-				succeed = true;
-			}	
-		}	
-	}
 
 	private void countMine() {
 		mineNumber = new int[height][width];
@@ -99,7 +100,8 @@ public class Ground {
 		if (x >= 0 && x < height && y >= 0 && y < width && expanded[x][y] == false) {
 			if (mineNumber[x][y] == 0) {
 				expanded[x][y] = true;
-				map[x][y] = 2;
+				if(map[x][y] != 3)
+					map[x][y] = 2;
 				expand(x + 1, y);
 				expand(x - 1, y);
 				expand(x, y + 1);
@@ -108,9 +110,9 @@ public class Ground {
 				expand(x + 1, y - 1);
 				expand(x - 1, y + 1);
 				expand(x - 1, y - 1);
-			} else{
-				if(map[x][y]!=3)
-					map[x][y] = 2;
+			} else {
+				if(map[x][y] != 3)
+				map[x][y] = 2;
 			}
 		}
 	}
@@ -135,46 +137,4 @@ public class Ground {
 	public int getMineNumXY(int x, int y){
 		return mineNumber[x][y];
 	}
-/*
-	public static void main(String[] args) {
-		Ground g = new Ground(30, 30, 100);
-
-		for (int i = 0; i < 30; ++i) {
-			for (int j = 0 ; j < 30 ; ++j)
-				System.out.print(g.getMap()[i][j] + " ");
-			System.out.println("");
-		}
-		System.out.println("");
-
-
-		g.expand(0, 0);
-		g.expand(29, 29);
-		g.expand(0, 29);
-		g.expand(29, 0);
-
-		for (int i = 0; i < 30; ++i) {
-			for (int j = 0 ; j < 30 ; ++j)
-			{
-				if(g.getMap()[i][j] == 2)
-				{
-					if(g.getMineNumber()[i][j] == 0)
-						System.out.print("  ");
-					else
-						System.out.print(g.getMineNumber()[i][j]+" ");					
-				}
-				else
-					System.out.print("* ");
-			}
-			System.out.println("");
-		}
-		System.out.println("");
-
-		for (int i = 0; i < 30; ++i) {
-			for (int j = 0 ; j < 30 ; ++j)
-				System.out.print(g.getMineNumber()[i][j] + " ");
-			System.out.println("");
-		}
-		System.out.println("");
-	}
-*/
 }

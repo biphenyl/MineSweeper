@@ -31,7 +31,7 @@ import javax.swing.SwingConstants;
 public class GUI extends JFrame
 {
 
-	private JPanel contentPane, leftPanel, rightPanel;
+	private JPanel contentPane, rightPanel, leftPanel;
 	private JLabel lbMovement, lbNowplayer, lbGameMessage;
 	private ArrayList<Player> players;
 	private GUI frame;
@@ -66,27 +66,27 @@ public class GUI extends JFrame
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
-		setBounds(100, 100, 1200, 1000);
+		setBounds(100, 100, 1250, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
-		leftPanel = new JPanel();
-		leftPanel.setBounds(934, 33, 248, 920);
-		contentPane.add(leftPanel);
-		leftPanel.setLayout(null);
+		rightPanel = new JPanel();
+		rightPanel.setBounds(934, 33, 298, 920);
+		contentPane.add(rightPanel);
+		rightPanel.setLayout(null);
 		
 		diceButton = new JButton(icon.dice[4]);
 		diceButton.setPressedIcon(icon.dice[0]);
 		diceButton.setBounds(20, 811, 96, 96);
 		diceButton.addActionListener(new DiceListener());
-		leftPanel.add(diceButton);
+		rightPanel.add(diceButton);
 		
 		sweeperButton = new JButton(icon.sweeper);
 		sweeperButton.setBounds(126, 811, 96, 96);
 		sweeperButton.addActionListener(new SweepListener());
-		leftPanel.add(sweeperButton);
+		rightPanel.add(sweeperButton);
 	
 		int[] yLabel = {33, 213, 393, 573};
 		for(int i=0; i<playerNum; ++i){
@@ -94,35 +94,35 @@ public class GUI extends JFrame
 			lb.setFont(new Font("Arial", Font.PLAIN, 36));
 			lb.setBounds(33, yLabel[i], 60, 56);
 			guiComponents_label.add(lb);
-			leftPanel.add(lb);
+			rightPanel.add(lb);
 			
 			lb = new JLabel("Score: 0");
 			lb.setFont(new Font("Arial", Font.PLAIN, 24));
-			lb.setBounds(33, yLabel[i]+70, 120, 27);
+			lb.setBounds(33, yLabel[i]+70, 135, 27);
 			guiComponents_label.add(lb);
-			leftPanel.add(lb);
+			rightPanel.add(lb);
 			
 		}
 		
 		JLabel lblx = new JLabel("5x");
 		lblx.setFont(new Font("新細明體", Font.PLAIN, 24));
 		lblx.setBounds(33, 200, 57, 19);
-		leftPanel.add(lblx);
+		rightPanel.add(lblx);
 		
 		lbMovement = new JLabel("1P 請擲骰子");
 		lbMovement.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
-		lbMovement.setBounds(14, 722, 208, 27);
-		leftPanel.add(lbMovement);
+		lbMovement.setBounds(14, 722, 300, 27);
+		rightPanel.add(lbMovement);
 		
 		lbNowplayer = new JLabel("現在玩家是: 1P");
 		lbNowplayer.setFont(new Font("華康新儷粗黑", Font.PLAIN, 24));
 		lbNowplayer.setBounds(20, 664, 202, 45);
-		leftPanel.add(lbNowplayer);
+		rightPanel.add(lbNowplayer);
 		
-		rightPanel = new JPanel();
-		rightPanel.setBounds(0, 33, 934, 920);
-		contentPane.add(rightPanel);
-		rightPanel.setLayout(null);
+		leftPanel = new JPanel();
+		leftPanel.setBounds(0, 33, 934, 920);
+		contentPane.add(leftPanel);
+		leftPanel.setLayout(null);
 		
 		lbGameMessage = new JLabel("");
 		lbGameMessage.setHorizontalAlignment(SwingConstants.CENTER);
@@ -139,11 +139,10 @@ public class GUI extends JFrame
 				MineButton btn = new MineButton(i, j);
 				btn.setSize(30, 30);
 				btn.setLocation(startY+j*30, startX+i*30);
-				//btn.setEnabled(false);
 				btn.addActionListener(new ButtonListener());
 				btn.pos = i*width+j;
 				guiComponents_btn.add(btn);
-				rightPanel.add(btn);
+				leftPanel.add(btn);
 			}
 		}
 
@@ -168,7 +167,6 @@ public class GUI extends JFrame
 	{
 		try
 		{
-			//frame = new GUI();
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
 		} catch (Exception e)
@@ -237,22 +235,14 @@ public class GUI extends JFrame
 				if(map[i][j]==0){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(icon.grayOldIcon);
-					//mb.setPressedIcon(icon.grayOldIcon);
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
-					mb.setIcon(icon.grayOldIcon);
-					
-					/*if(moveable(i, j))
-						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
-					else
-						mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));*/
-					
+					mb.setIcon(icon.grayOldIcon);					
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
-					//mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
 				}
 				else if(map[i][j]==3){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
@@ -268,12 +258,6 @@ public class GUI extends JFrame
 			mb = (MineButton)guiComponents_btn.get(x*width+y);
 			mb.setIcon(players.get(i).getIcon()[mineNumber[x][y]]);
 		}
-		
-		if(mp>0){
-			//hLMove(x, y);
-			
-		}
-		
 	}
 	
 	private void highLightMove(int x, int y)
@@ -609,7 +593,18 @@ public class GUI extends JFrame
 
 	private void victory()
 	{
-		
+		int[][] map = ground.getMap();
+		int[][] mineNumber = ground.getMineNumber();
+		MineButton mb;
+		// test to show mines
+		for(int i=0; i<height; ++i){
+			for(int j=0; j<width; ++j){
+				if(map[i][j]==1){
+					mb = (MineButton)guiComponents_btn.get(i*width+j);
+					mb.setIcon(icon.explodeSmall);
+				}
+			}
+		}
 	}
 
 	class ButtonListener implements ActionListener
@@ -759,20 +754,29 @@ public class GUI extends JFrame
 		
 		private boolean surroundSweep(int x, int y){
 			int[][] opened = ground.getMap();
-			if(opened[x-1][y-1]==0 || opened[x-1][y]==0 || opened[x-1][y+1]==0 || opened[x][y-1]==0 
-					|| opened[x][y+1]==0 || opened[x+1][y-1]==0 || opened[x+1][y]==0 || opened[x+1][y+1]==0){
-				return true;
-			}
-			else if(opened[x-1][y-1]==1 || opened[x-1][y]==1 || opened[x-1][y+1]==1 || opened[x][y-1]==1 
-					|| opened[x][y+1]==1 || opened[x+1][y-1]==1 || opened[x+1][y]==1 || opened[x+1][y+1]==1){
-				return true;
-			}
-			else 
-				return false;
-				
 			
+			boolean[][] check = new boolean[3][3];
+			
+			for(int i=-1; i<2; ++i)
+				for(int j=-1; j<2; ++j)
+				{
+					if(x+i < 0 || x+i >= height || y+j <0 || y+i >= width)
+						check[i+1][j+1] = false;
+					else
+						check[i+1][j+1] = true;
+				}
+			
+			for(int i=0; i<3; ++i)
+				for(int j=0; j<3; ++j)
+				{
+					if(i==1 && j==1)
+						continue;
+					if(check[i][j])
+						if(opened[x+i-1][y+j-1] == 0 || opened[x+i-1][y+j-1] == 1)
+							return true;	
+				}
+			return false;
 		}
-		
 	}
 	
 	class CloseListener implements WindowListener

@@ -20,7 +20,6 @@ import javax.swing.SwingConstants;
 
 public class StartGUI extends JFrame {
 
-	private StartGUI frame;
 	private JPanel contentPane;
 	private JTextField numberOfMine_t, width_t, height_t;
 	private JButton buttonStart, buttonLeave;
@@ -63,11 +62,11 @@ public class StartGUI extends JFrame {
 		contentPane.add(label3);
 		
 		label5 = new JLabel("(地圖大小: 10*10 ~ 30*30)");
-		label5.setBounds(90, 140, 150, 25);
+		label5.setBounds(90, 140, 180, 25);
 		contentPane.add(label5);
 		
-		label5 = new JLabel("(地圖大小/5<地雷數<地圖大小/3)");
-		label5.setBounds(90, 165, 200, 25);
+		label5 = new JLabel("(地圖大小/5<=地雷數<=地圖大小/3)");
+		label5.setBounds(90, 165, 240, 25);
 		contentPane.add(label5);
 		
 		
@@ -126,7 +125,7 @@ public class StartGUI extends JFrame {
 				if(width > 30 || width < 10 || height > 30 || height < 10)
 					JOptionPane.showMessageDialog(button.getParent() , "地圖大小必須介於 10*10 ~ 30*30");
 				else if(numberOfMine > width*height/3 || numberOfMine < width*height/5)
-					JOptionPane.showMessageDialog(button.getParent() , "地雷數必須介於 地圖大小/5 ~ 地圖大小/3");
+					JOptionPane.showMessageDialog(button.getParent() , "地雷數必須介於 "+width*height/5+" ~ "+width*height/3);
 				else 
 					startGame();
 			}
