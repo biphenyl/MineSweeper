@@ -40,7 +40,7 @@ public class GUI extends JFrame
 	private int state=2, mp, nowPlayer;	//state : 0=moving, 1=sweeping, 2=throwing dice
 	private int playerNum, width, height, totalMine;
 	private int strenth1, strenth2;
-	private int dontCleanX, dontCleanY;
+	private int dontCleanX, dontCleanY, volumeState;
 	private long msgTime;
 	private Player fighter1, fighter2;
 	private ArrayList<JComponent> guiComponents_btn = new ArrayList<JComponent>(900);
@@ -148,6 +148,29 @@ public class GUI extends JFrame
 		btnRestart.addActionListener(new RestartListener());
 		contentPane.add(btnRestart);
 		
+		final JButton btnMute = new JButton();
+		btnMute.setIcon(icon.mute);
+		btnMute.setBounds(1080, 1, 32, 32);
+		btnMute.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				// TODO Auto-generated method stub
+				if(volumeState==1){
+					SoundEffect.volume = SoundEffect.volume.MUTE;
+					btnMute.setIcon(icon.volume);
+					volumeState = 0;
+				}
+				else{
+					SoundEffect.volume = SoundEffect.volume.ON;
+					btnMute.setIcon(icon.mute);
+					volumeState = 1;
+				}
+			}
+		});
+		contentPane.add(btnMute);
+		
 		int startX = (920-30*height)/2;
 		int startY = (934-30*width)/2;
 		for(int i=0; i<height; ++i)
@@ -171,7 +194,7 @@ public class GUI extends JFrame
 		
 		SoundEffect.init();
 		SoundEffect.volume = SoundEffect.Volume.ON;
-		SoundEffect.BGM.alwaysPlay();
+		volumeState = 1;
 		
 		dontCleanY = -1;
 		dontCleanX = -1;
@@ -189,6 +212,7 @@ public class GUI extends JFrame
 		{
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
+			//SoundEffect.BGM.alwaysPlay();
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -205,15 +229,37 @@ public class GUI extends JFrame
 		
 		players.get(0).setInitPos(1, 1);
 		players.get(0).setIcon(icon.redIcon);
+		
+		JLabel lb = new JLabel();
+		lb.setBounds(80, 35, 32, 32);
+		lb.setIcon(players.get(0).getIcon()[0]);
+		rightPanel.add(lb);
+		
 		players.get(1).setInitPos(height-2, 1);
 		players.get(1).setIcon(icon.blueExIcon);
+		
+		lb = new JLabel();
+		lb.setBounds(80, 155, 32, 32);
+		lb.setIcon(players.get(1).getIcon()[0]);
+		rightPanel.add(lb);
+		
 		if(playerNum>=3){
 			players.get(2).setInitPos(1, width-2);
 			players.get(2).setIcon(icon.greenIcon);
+			
+			lb = new JLabel();
+			lb.setBounds(80, 275, 32, 32);
+			lb.setIcon(players.get(2).getIcon()[0]);
+			rightPanel.add(lb);
 		}
 		if(playerNum==4){
 			players.get(3).setInitPos(height-2, width-2);
 			players.get(3).setIcon(icon.yellowIcon);
+			
+			lb = new JLabel();
+			lb.setBounds(80, 395, 32, 32);
+			lb.setIcon(players.get(3).getIcon()[0]);
+			rightPanel.add(lb);
 		}
 		
 		nowPlayer = 0;
@@ -543,7 +589,7 @@ public class GUI extends JFrame
 	private void updateScore(Player p, int score)
 	{
 		p.addScore(score);
-		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*2+1);
+		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*3+1);
 		lb.setText("Score: " + Integer.toString(p.getScore()));
 		
 		if(victoryCheck())
