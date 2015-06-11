@@ -69,7 +69,7 @@ public class GUI extends JFrame
 		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new CloseListener());
-		setBounds(100, 100, 1200, 1000);
+		setBounds(100, 100, 1250, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -101,7 +101,7 @@ public class GUI extends JFrame
 			
 			lb = new JLabel("Score: 0");
 			lb.setFont(new Font("Arial", Font.PLAIN, 24));
-			lb.setBounds(33, yLabel[i]+70, 120, 27);
+			lb.setBounds(33, yLabel[i]+70, 135, 27);
 			guiComponents_label.add(lb);
 			rightPanel.add(lb);
 			
@@ -157,7 +157,6 @@ public class GUI extends JFrame
 				MineButton btn = new MineButton(i, j);
 				btn.setSize(30, 30);
 				btn.setLocation(startY+j*30, startX+i*30);
-				//btn.setEnabled(false);
 				btn.addActionListener(new ButtonListener());
 				btn.pos = i*width+j;
 				guiComponents_btn.add(btn);
@@ -187,7 +186,6 @@ public class GUI extends JFrame
 	{
 		try
 		{
-			//frame = new GUI();
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
 		} catch (Exception e)
@@ -257,22 +255,14 @@ public class GUI extends JFrame
 				if(map[i][j]==0){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(icon.grayOldIcon);
-					//mb.setPressedIcon(icon.grayOldIcon);
 				}
 				else if(map[i][j]==1){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
-					mb.setIcon(icon.grayOldIcon);
-					
-					/*if(moveable(i, j))
-						mb.setPressedIcon(new ImageIcon("pic/explodeSmall.gif"));
-					else
-						mb.setPressedIcon(new ImageIcon("pic/grayOldIcon.jpg"));*/
-					
+					mb.setIcon(icon.grayOldIcon);					
 				}
 				else if(map[i][j]==2){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
 					mb.setIcon(icon.whiteIcon[mineNumber[i][j]]);
-					//mb.setPressedIcon(icon.whiteIcon[mineNumber[i][j]]);
 				}
 				else if(map[i][j]==3){
 					mb = (MineButton)guiComponents_btn.get(i*width+j);
@@ -556,6 +546,9 @@ public class GUI extends JFrame
 		JLabel lb = (JLabel)guiComponents_label.get(p.getOrder()*2+1);
 		lb.setText("Score: " + Integer.toString(p.getScore()));
 		
+		if(victoryCheck())
+			victory();
+		
 		System.out.println("Score updated!");
 	}
 	
@@ -672,7 +665,18 @@ public class GUI extends JFrame
 
 	private void victory()
 	{
-		
+		int[][] map = ground.getMap();
+		int[][] mineNumber = ground.getMineNumber();
+		MineButton mb;
+		// test to show mines
+		for(int i=0; i<height; ++i){
+			for(int j=0; j<width; ++j){
+				if(map[i][j]==1){
+					mb = (MineButton)guiComponents_btn.get(i*width+j);
+					mb.setIcon(icon.explodeSmall);
+				}
+			}
+		}
 	}
 
 	class ButtonListener implements ActionListener
@@ -733,8 +737,6 @@ public class GUI extends JFrame
             }
             System.out.println(mp);
             
-            if(victoryCheck())
-            	victory();
         }
 
 	}
@@ -858,7 +860,6 @@ public class GUI extends JFrame
 				dispose();
 			}
 		}
-		
 	}
 	
 	class CloseListener implements WindowListener
