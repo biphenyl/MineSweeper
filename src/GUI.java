@@ -171,6 +171,7 @@ public class GUI extends JFrame
 		
 		SoundEffect.init();
 		SoundEffect.volume = SoundEffect.Volume.ON;
+		SoundEffect.BGM.alwaysPlay();
 		
 		dontCleanY = -1;
 		dontCleanX = -1;

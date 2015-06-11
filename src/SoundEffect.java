@@ -18,7 +18,8 @@ import javax.sound.sampled.LineUnavailableException;
 
 public enum SoundEffect {
     EXPLODE("sound/explode.wav"),
-    BEFOREBATTLE("sound/beforeBattle.wav");
+    BEFOREBATTLE("sound/beforeBattle.wav"),
+    BGM("sound/bgm.wav");
 
     public static enum Volume {
         MUTE, ON
@@ -47,6 +48,15 @@ public enum SoundEffect {
                 clip.stop();
             clip.setFramePosition(0);
             clip.start();
+        }
+    }
+    public void alwaysPlay() {
+        if (volume != Volume.MUTE) {
+            clip.setFramePosition(0);
+            while (true) {
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
         }
     }
     static void init() {
