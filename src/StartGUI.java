@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -7,6 +8,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -40,7 +44,6 @@ public class StartGUI extends JFrame {
 	public StartGUI() {
 		
 		this.setTitle("Mine Sweeper");
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(760, 390, 400, 300);
 		contentPane = new JPanel();
@@ -112,12 +115,36 @@ public class StartGUI extends JFrame {
 		contentPane.add(width_t);
 		width_t.setColumns(10);
 		width_t.setText(Integer.toString(15));
-		
+		width_t.getDocument().addDocumentListener(
+			new DocumentListener() {
+				public void changedUpdate(DocumentEvent e){
+					label5.setText(getBombMessage());
+				}
+				public void insertUpdate(DocumentEvent e) {
+					label5.setText(getBombMessage());
+				}
+				public void removeUpdate(DocumentEvent e) {
+					label5.setText(getBombMessage());
+				}
+			});
 		height_t = new JTextField();
 		height_t.setColumns(10);
 		height_t.setBounds(250, 75, 40, 25);
 		contentPane.add(height_t);
 		height_t.setText(Integer.toString(15));
+		height_t.getDocument().addDocumentListener(
+			new DocumentListener() {
+				public void changedUpdate(DocumentEvent e){
+					label5.setText(getBombMessage());
+				}
+				public void insertUpdate(DocumentEvent e) {
+					label5.setText(getBombMessage());
+				}
+				public void removeUpdate(DocumentEvent e) {
+					label5.setText(getBombMessage());
+				}
+			});
+		
 		
 		numberOfMine_t = new JTextField();
 		numberOfMine_t.setBounds(200, 110, 50, 25);
@@ -125,6 +152,9 @@ public class StartGUI extends JFrame {
 		numberOfMine_t.setColumns(3);
 		numberOfMine_t.setText(Integer.toString(75));
 		
+		//display form at center.
+		Dimension dim = getToolkit().getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getWidth()/2, dim.height/2-this.getHeight()/2);
 	}
 
 	public void run(){
@@ -138,6 +168,19 @@ public class StartGUI extends JFrame {
 		gui.run();
 		
 		this.setVisible(false);
+	}
+	
+	private String getBombMessage(){
+		try{
+			int minBomb = Integer.parseInt(width_t.getText())*Integer.parseInt(height_t.getText())/5;
+			int maxBomb = Integer.parseInt(width_t.getText())*Integer.parseInt(height_t.getText())/3;
+			String info = minBomb + " <= 地雷數 <= " + maxBomb;
+			return info;
+		}
+		catch(NumberFormatException ex){
+			return "(地圖大小/5<=地雷數<=地圖大小/3)";
+		}
+		
 	}
 	
 	class ImagePanel extends JComponent {
